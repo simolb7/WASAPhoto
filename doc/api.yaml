@@ -598,7 +598,7 @@ paths:
           "400": { $ref: "#/components/responses/BadRequest" }
           "401": { $ref: "#/components/responses/UnauthorizedError" }
           "500": { $ref: "#/components/responses/InternalServerError" }  
-  /user/{username}/photo/{photoId}/like/{likeID}:
+  /user/{username}/photo/{photoID}/like/{likeID}:
     parameters:
       - $ref : "#/components/parameters/username"
       - $ref : "#/components/parameters/photoID"
@@ -636,7 +636,7 @@ paths:
           
         "401": { $ref: "#/components/responses/UnauthorizedError" }
         "500": { $ref: "#/components/responses/InternalServerError" }
-  /user/{username}/photo/{photoId}/like:
+  /user/{username}/photo/{photoID}/like:
     parameters: 
       - $ref: "#/components/parameters/username"
       - $ref : "#/components/parameters/photoID"
@@ -853,27 +853,3 @@ paths:
         "401": { $ref: "#/components/responses/UnauthorizedError" }
         "500": { $ref: "#/components/responses/InternalServerError" }
   /user/{username}/stream:
-    parameters: 
-      - $ref: "#/components/parameters/username"
-    get:
-      operationId: getMyStream
-      tags: ["User"]
-      security:
-          - bearerAuth : []
-      summary: Return the user's stream
-      description: |
-        Return the user's stream.
-      responses:
-        "200":
-          description: Stream found correctly.
-          content:
-            application/json:
-              schema: 
-                type: array
-                minItems: 0
-                maxItems: 9999
-                description: images array schema.
-                items: { $ref: "#/components/schemas/stream"}
-        "400": { $ref: "#/components/responses/BadRequest" }
-        "401": { $ref: "#/components/responses/UnauthorizedError" }
-        "500": { $ref: "#/components/responses/InternalServerError" }
