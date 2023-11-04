@@ -41,17 +41,19 @@ components:
           description: Unique user identifier.
           type: string
           example: 56A
+          pattern: 'ˆ.*?$'
           readOnly: true
         username:
           description: username
           type: string
+          pattern: 'ˆ.*?$'
           example: MarioRossi
     login:
       title: Login
       description: "Log-in"
       type: object
       properties:
-        name:
+        username:
           type: string
           example: Maria
           pattern: 'ˆ.*?$'
@@ -66,6 +68,7 @@ components:
         photoID: 
           description: Unique photo identifier.
           type: string
+          pattern: 'ˆ.*?$'
           example: 472S
           readOnly: true
           minLength: 3
@@ -73,6 +76,7 @@ components:
         userID:
           description: Unique photo identifier.
           type: string
+          pattern: 'ˆ.*?$'
           example: 56A
           readOnly: true  
           minLength: 3
@@ -87,7 +91,7 @@ components:
           description: Date and time when photo was uploaded
           type: string
           format: date-time
-          example: "2023-11-1T17:32:28Z"
+          example: "2023-11-03T17:32:28Z"
         likeNumber:
           description: Number of likes on the photo
           type: integer
@@ -106,6 +110,7 @@ components:
         photoOwner:
           description:  Owner of the photo.
           type: string
+          pattern: 'ˆ.*?$'
           example: 56A
           readOnly: true  
           minLength: 3
@@ -113,6 +118,7 @@ components:
         photoID:
           description: Unique photo identifier.
           type: string
+          pattern: 'ˆ.*?$'
           example: 472S
           readOnly: true
           minLength: 3
@@ -120,6 +126,7 @@ components:
         likeID:
           description: "Like ID"
           type: string
+          pattern: 'ˆ.*?$'
           example: JKW
           readOnly: true
           minLength: 3
@@ -127,6 +134,7 @@ components:
         userID:
           description: Unique user identifier.
           type: string
+          pattern: 'ˆ.*?$'
           example: 56A
           readOnly: true
     comment:
@@ -137,6 +145,7 @@ components:
         photoOwner:
           description:  Owner of the photo.
           type: string
+          pattern: 'ˆ.*?$'
           example: 56A
           readOnly: true  
           minLength: 3
@@ -144,6 +153,7 @@ components:
         photoID:
           description: Unique photo identifier.
           type: string
+          pattern: 'ˆ.*?$'
           example: 472S
           readOnly: true
           minLength: 3
@@ -151,6 +161,7 @@ components:
         commentID:
           description: "Comment ID"
           type: string
+          pattern: 'ˆ.*?$'
           example: JKW
           readOnly: true
           minLength: 3
@@ -158,11 +169,13 @@ components:
         userID:
           description: Unique user identifier.
           type: string
+          pattern: 'ˆ.*?$'
           example: 56A
           readOnly: true
         content:
           description: Content of the comment
           type: string
+          pattern: 'ˆ.*?$'
           example: "Hi to everyone"
           readOnly: true
     follow:
@@ -173,6 +186,7 @@ components:
         followID:
           description: "Follow ID"
           type: string
+          pattern: 'ˆ.*?$'
           example: JJKS
           readOnly: true
           minLength: 3
@@ -180,11 +194,13 @@ components:
         userID:
           description: Unique user identifier.
           type: string
+          pattern: 'ˆ.*?$'
           example: 56A
           readOnly: true
         userFollowedID:
           description: Unique user identifier.
           type: string
+          pattern: 'ˆ.*?$'
           example: 47A
           readOnly: true
     ban:
@@ -195,6 +211,7 @@ components:
         banID:
           description: "Ban ID"
           type: string
+          pattern: 'ˆ.*?$'
           example: BB7
           readOnly: true
           minLength: 3
@@ -202,11 +219,13 @@ components:
         userID:
           description: Unique user identifier.
           type: string
+          pattern: 'ˆ.*?$'
           example: 56A
           readOnly: true
         userBannedID:
           description: Unique user identifier.
           type: string
+          pattern: 'ˆ.*?$'
           example: 47A
           readOnly: true    
     profile:
@@ -217,6 +236,7 @@ components:
         RequestID:
           description: "Request ID"
           type: string
+          pattern: 'ˆ.*?$'
           example: RR6
           readOnly: true
           minLength: 3
@@ -224,11 +244,13 @@ components:
         userID:
           description: Unique user identifier.
           type: string
+          pattern: 'ˆ.*?$'
           example: 56A
           readOnly: true
         username:
           description: username
           type: string
+          pattern: 'ˆ.*?$'
           example: MarioRossi
         Numberfollowers:
           description: "Number of followers"
@@ -254,18 +276,21 @@ components:
         userID:
           description: Unique user identifier.
           type: string
+          pattern: 'ˆ.*?$'
           example: 56A
           readOnly: true
         photos:
           description: List of objects (photo)
           type: array
           minItems: 0
+          maxItems: 9999
           items:
             type: object
             properties: 
               photoID: 
                 description: Unique photo identifier.
                 type: string
+                pattern: 'ˆ.*?$'
                 example: 472S
                 readOnly: true
                 minLength: 3
@@ -273,6 +298,7 @@ components:
               userID:
                 description: Unique photo identifier.
                 type: string
+                pattern: 'ˆ.*?$'
                 example: 56A
                 readOnly: true  
                 minLength: 3
@@ -280,6 +306,7 @@ components:
               file:
                 description: file path
                 type: string
+                pattern: 'ˆ.*?$'
                 format: binary
                 minLength: 1
                 maxLength: 999
@@ -306,18 +333,21 @@ components:
         requestID:
           description: Unique request identifier.
           type: string
+          pattern: 'ˆ.*?$'
           example: 564A
           readOnly: true
         photos:
           description: List of objects (photo)
           type: array
           minItems: 0
+          maxItems: 9999
           items:
             type: object
             properties: 
               photoID: 
                 description: Unique photo identifier.
                 type: string
+                pattern: 'ˆ.*?$'
                 example: 472S
                 readOnly: true
                 minLength: 3
@@ -325,6 +355,7 @@ components:
               userID:
                 description: Unique user identifier.
                 type: string
+                pattern: 'ˆ.*?$'
                 example: 56A
                 readOnly: true  
                 minLength: 3
@@ -332,6 +363,7 @@ components:
               file:
                 description: file path
                 type: string
+                pattern: 'ˆ.*?$'
                 format: binary
                 minLength: 1
                 maxLength: 999
@@ -381,6 +413,7 @@ components:
       schema:
         description: "Like ID"
         type: string
+        pattern: 'ˆ.*?$'
         example: JKW
         readOnly: true
         minLength: 3
@@ -394,6 +427,7 @@ components:
       schema:
         description: "Comment ID"
         type: string
+        pattern: 'ˆ.*?$'
         example: KIS8
         readOnly: true
         minLength: 3
@@ -406,6 +440,7 @@ components:
       schema:
         description: "Follow ID"
         type: string
+        pattern: 'ˆ.*?$'
         example: JSL3
         readOnly: true
         minLength: 3
@@ -418,6 +453,7 @@ components:
       schema:
         description: "Ban ID"
         type: string
+        pattern: 'ˆ.*?$'
         example: JD33
         readOnly: true
         minLength: 3
@@ -434,8 +470,11 @@ components:
       description:  the server encountered an unexpected condition that prevented it from fulfilling the request.
     UnauthorizedError:
       description: The client request has not been completed because it lacks valid authentication credentials for the requested resource
-    
-
+  
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
       
 paths:
   /session:
@@ -475,7 +514,11 @@ paths:
       - $ref : "#/components/parameters/username"
     put:
       operationId: setMyUserName
-      summary: Replace the current username with the username specified in the body of the request
+      summary: Replace username
+      description: |-
+           Replace the current username with the username specified in the body of the request     
+      security:
+        - bearerAuth : []
       requestBody:
         content: 
           application/json:
@@ -492,13 +535,17 @@ paths:
         "401": { $ref: "#/components/responses/UnauthorizedError" }
         "500": { $ref: "#/components/responses/InternalServerError" }
  
-  /user/{username}/photo/{photoId}:
+  /user/{username}/photo/{photoID}:
     parameters:
       - $ref : "#/components/parameters/username"
       - $ref : "#/components/parameters/photoID"
     put: 
       operationId: uploadPhoto
       summary: Upload a photo
+      description: |-
+          Upload photo from the body of the request    
+      security:
+        - bearerAuth : []
       requestBody:
         content: 
           application/json:
@@ -518,6 +565,10 @@ paths:
       operationId: deletePhoto
       summary: Delete a photo
       tags: ["Photo"]
+      description: |-
+          Delete photo from the system
+      security:
+        - bearerAuth : []
       responses:
         "204":
           description: Photo removed correctly from the System
@@ -533,6 +584,8 @@ paths:
       get:
         operationId: getUserPhotos
         tags: ["Photo"]
+        security:
+          - bearerAuth : []
         summary: Return user's photo
         description: |
           Return the photos founded.
@@ -555,6 +608,8 @@ paths:
       operationId: likePhotos
       summary: Like a photo 
       tags: ["Like"]
+      security:
+          - bearerAuth : []
       description: Add like in the system
       responses:
         "200":
@@ -571,6 +626,8 @@ paths:
       summary: Unike a photo
       description: Remove like from the system
       tags: ["Like"]
+      security:
+          - bearerAuth : []
       responses:
         "204":
           description: Like removed correctly
@@ -586,6 +643,8 @@ paths:
     get:
       operationId: getLike
       tags: ["Like"]
+      security:
+          - bearerAuth : []
       summary: Return like
       description: |
         Return like of a specific photo.
@@ -598,7 +657,7 @@ paths:
         "400": { $ref: "#/components/responses/BadRequest" }
         "401": { $ref: "#/components/responses/UnauthorizedError" }
         "500": { $ref: "#/components/responses/InternalServerError" }      
-  /user/{username}/photo/{photoId}/comment/{commentID}:
+  /user/{username}/photo/{photoID}/comment/{commentID}:
     parameters:
       - $ref : "#/components/parameters/username"
       - $ref : "#/components/parameters/photoID"
@@ -609,6 +668,8 @@ paths:
       operationId: commentPhoto
       summary: Comment a photo 
       tags: ["Comment"]
+      security:
+          - bearerAuth : []
       description: Add comment in the system
       responses:
         "200":
@@ -624,6 +685,8 @@ paths:
       operationId: uncommentPhoto
       summary: Uncomment a photo
       description: Remove comment from the system
+      security:
+          - bearerAuth : []
       tags: ["Comment"]
       responses:
         "204":
@@ -633,13 +696,15 @@ paths:
           
         "401": { $ref: "#/components/responses/UnauthorizedError" }
         "500": { $ref: "#/components/responses/InternalServerError" } 
-  /user/{username}/photo/{photoId}/comment:
+  /user/{username}/photo/{photoID}/comment:
     parameters: 
       - $ref: "#/components/parameters/username"
       - $ref : "#/components/parameters/photoID"
     get:
       operationId: getComment
       tags: ["Comment"]
+      security:
+          - bearerAuth : []
       summary: Return Comment
       description: |
         Return comment of a specific photo.
@@ -661,6 +726,8 @@ paths:
       operationId: followUser
       summary: Follow User 
       tags: ["Follow"]
+      security:
+          - bearerAuth : []
       description: Add Follow in the system
       responses:
         "200":
@@ -676,6 +743,8 @@ paths:
       operationId: unfollowUser
       summary: Unollow User 
       tags: ["Follow"]
+      security:
+          - bearerAuth : []
       description: Remove Follow from the system
       responses:
         "204":
@@ -692,6 +761,8 @@ paths:
       get:
         operationId: getFollow
         tags: ["Follow"]
+        security:
+          - bearerAuth : []
         summary: Return follow
         description: |
           Return the follow.
@@ -713,6 +784,8 @@ paths:
       operationId: banUser
       summary: Ban User 
       tags: ["Ban"]
+      security:
+          - bearerAuth : []
       description: Add Ban in the system
       responses:
         "200":
@@ -727,6 +800,8 @@ paths:
       operationId: unbanUser
       summary: Unban User 
       tags: ["Ban"]
+      security:
+          - bearerAuth : []
       description: Remove Ban from the system
       responses:
         "204":
@@ -743,6 +818,8 @@ paths:
       get:
         operationId: getBan
         tags: ["Ban"]
+        security:
+          - bearerAuth : []
         summary: Return Ban
         description: |
           Return the ban founded.
@@ -761,6 +838,8 @@ paths:
     get:
       operationId: getUserProfile
       tags: ["User"]
+      security:
+          - bearerAuth : []
       summary: Return the user's profile
       description: |
         Return the user's profile found.
@@ -779,6 +858,8 @@ paths:
     get:
       operationId: getMyStream
       tags: ["User"]
+      security:
+          - bearerAuth : []
       summary: Return the user's stream
       description: |
         Return the user's stream.
@@ -790,6 +871,7 @@ paths:
               schema: 
                 type: array
                 minItems: 0
+                maxItems: 9999
                 description: images array schema.
                 items: { $ref: "#/components/schemas/stream"}
         "400": { $ref: "#/components/responses/BadRequest" }
