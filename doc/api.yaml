@@ -41,13 +41,17 @@ components:
           description: Unique user identifier.
           type: string
           example: 56A
-          pattern: 'ˆ.*?$'
+          pattern: '^.*?$'
           readOnly: true
+          minLength: 3
+          maxLength: 16
         username:
           description: username
           type: string
-          pattern: 'ˆ.*?$'
+          pattern: '^.*?$'
           example: MarioRossi
+          minLength: 3
+          maxLength: 16
     login:
       title: Login
       description: "Log-in"
@@ -55,8 +59,9 @@ components:
       properties:
         username:
           type: string
+          description: user
           example: Maria
-          pattern: 'ˆ.*?$'
+          pattern: '^.*?$'
           minLength: 3
           maxLength: 16
 
@@ -68,7 +73,7 @@ components:
         photoID: 
           description: Unique photo identifier.
           type: string
-          pattern: 'ˆ.*?$'
+          pattern: '^.*?$'
           example: 472S
           readOnly: true
           minLength: 3
@@ -76,7 +81,7 @@ components:
         userID:
           description: Unique photo identifier.
           type: string
-          pattern: 'ˆ.*?$'
+          pattern: '^.*?$'
           example: 56A
           readOnly: true  
           minLength: 3
@@ -110,7 +115,7 @@ components:
         photoOwner:
           description:  Owner of the photo.
           type: string
-          pattern: 'ˆ.*?$'
+          pattern: '^.*?$'
           example: 56A
           readOnly: true  
           minLength: 3
@@ -118,7 +123,7 @@ components:
         photoID:
           description: Unique photo identifier.
           type: string
-          pattern: 'ˆ.*?$'
+          pattern: '^.*?$'
           example: 472S
           readOnly: true
           minLength: 3
@@ -126,7 +131,7 @@ components:
         likeID:
           description: "Like ID"
           type: string
-          pattern: 'ˆ.*?$'
+          pattern: '^.*?$'
           example: JKW
           readOnly: true
           minLength: 3
@@ -134,7 +139,7 @@ components:
         userID:
           description: Unique user identifier.
           type: string
-          pattern: 'ˆ.*?$'
+          pattern: '^.*?$'
           example: 56A
           readOnly: true
     comment:
@@ -145,7 +150,7 @@ components:
         photoOwner:
           description:  Owner of the photo.
           type: string
-          pattern: 'ˆ.*?$'
+          pattern: '^.*?$'
           example: 56A
           readOnly: true  
           minLength: 3
@@ -153,7 +158,7 @@ components:
         photoID:
           description: Unique photo identifier.
           type: string
-          pattern: 'ˆ.*?$'
+          pattern: '^.*?$'
           example: 472S
           readOnly: true
           minLength: 3
@@ -161,7 +166,7 @@ components:
         commentID:
           description: "Comment ID"
           type: string
-          pattern: 'ˆ.*?$'
+          pattern: '^.*?$'
           example: JKW
           readOnly: true
           minLength: 3
@@ -169,14 +174,17 @@ components:
         userID:
           description: Unique user identifier.
           type: string
-          pattern: 'ˆ.*?$'
+          pattern: '^.*?$'
           example: 56A
+          minLength: 3
+          maxLength: 16
           readOnly: true
         content:
           description: Content of the comment
           type: string
-          pattern: 'ˆ.*?$'
           example: "Hi to everyone"
+          minLength: 3
+          maxLength: 16
           readOnly: true
     follow:
       title: follow
@@ -186,7 +194,7 @@ components:
         followID:
           description: "Follow ID"
           type: string
-          pattern: 'ˆ.*?$'
+          pattern: '^.*?$'
           example: JJKS
           readOnly: true
           minLength: 3
@@ -194,14 +202,18 @@ components:
         userID:
           description: Unique user identifier.
           type: string
-          pattern: 'ˆ.*?$'
+          pattern: '^.*?$'
           example: 56A
+          minLength: 3
+          maxLength: 16
           readOnly: true
         userFollowedID:
           description: Unique user identifier.
           type: string
-          pattern: 'ˆ.*?$'
+          pattern: '^.*?$'
           example: 47A
+          minLength: 3
+          maxLength: 16
           readOnly: true
     ban:
       title: ban
@@ -211,7 +223,7 @@ components:
         banID:
           description: "Ban ID"
           type: string
-          pattern: 'ˆ.*?$'
+          pattern: '^.*?$'
           example: BB7
           readOnly: true
           minLength: 3
@@ -219,14 +231,18 @@ components:
         userID:
           description: Unique user identifier.
           type: string
-          pattern: 'ˆ.*?$'
+          pattern: '^.*?$'
           example: 56A
+          minLength: 3
+          maxLength: 16
           readOnly: true
         userBannedID:
           description: Unique user identifier.
           type: string
-          pattern: 'ˆ.*?$'
+          pattern: '^.*?$'
           example: 47A
+          minLength: 3
+          maxLength: 16
           readOnly: true    
     profile:
       title: profile
@@ -236,7 +252,7 @@ components:
         RequestID:
           description: "Request ID"
           type: string
-          pattern: 'ˆ.*?$'
+          pattern: '^.*?$'
           example: RR6
           readOnly: true
           minLength: 3
@@ -244,14 +260,18 @@ components:
         userID:
           description: Unique user identifier.
           type: string
-          pattern: 'ˆ.*?$'
+          pattern: '^.*?$'
           example: 56A
+          minLength: 3
+          maxLength: 16
           readOnly: true
         username:
           description: username
           type: string
-          pattern: 'ˆ.*?$'
+          pattern: '^.*?$'
           example: MarioRossi
+          minLength: 3
+          maxLength: 16
         Numberfollowers:
           description: "Number of followers"
           type: integer
@@ -276,8 +296,10 @@ components:
         userID:
           description: Unique user identifier.
           type: string
-          pattern: 'ˆ.*?$'
+          pattern: '^.*?$'
           example: 56A
+          minLength: 3
+          maxLength: 16
           readOnly: true
         photos:
           description: List of objects (photo)
@@ -290,7 +312,7 @@ components:
               photoID: 
                 description: Unique photo identifier.
                 type: string
-                pattern: 'ˆ.*?$'
+                pattern: '^.*?$'
                 example: 472S
                 readOnly: true
                 minLength: 3
@@ -298,7 +320,7 @@ components:
               userID:
                 description: Unique photo identifier.
                 type: string
-                pattern: 'ˆ.*?$'
+                pattern: '^.*?$'
                 example: 56A
                 readOnly: true  
                 minLength: 3
@@ -306,7 +328,7 @@ components:
               file:
                 description: file path
                 type: string
-                pattern: 'ˆ.*?$'
+                pattern: '^.*?$'
                 format: binary
                 minLength: 1
                 maxLength: 999
@@ -314,7 +336,7 @@ components:
                 description: Date and time when photo was uploaded
                 type: string
                 format: date-time
-                example: "2023-11-1T17:32:28Z"
+                example: "2023-11-01T17:32:28Z"
               likeNumber:
                 description: Number of likes on the photo
                 type: integer
@@ -333,8 +355,10 @@ components:
         requestID:
           description: Unique request identifier.
           type: string
-          pattern: 'ˆ.*?$'
+          pattern: '^.*?$'
           example: 564A
+          minLength: 3
+          maxLength: 16
           readOnly: true
         photos:
           description: List of objects (photo)
@@ -347,7 +371,7 @@ components:
               photoID: 
                 description: Unique photo identifier.
                 type: string
-                pattern: 'ˆ.*?$'
+                pattern: '^.*?$'
                 example: 472S
                 readOnly: true
                 minLength: 3
@@ -355,7 +379,7 @@ components:
               userID:
                 description: Unique user identifier.
                 type: string
-                pattern: 'ˆ.*?$'
+                pattern: '^.*?$'
                 example: 56A
                 readOnly: true  
                 minLength: 3
@@ -363,7 +387,7 @@ components:
               file:
                 description: file path
                 type: string
-                pattern: 'ˆ.*?$'
+                pattern: '^.*?$'
                 format: binary
                 minLength: 1
                 maxLength: 999
@@ -371,7 +395,7 @@ components:
                 description: Date and time when photo was uploaded
                 type: string
                 format: date-time
-                example: "2023-11-1T17:32:28Z"
+                example: "2023-11-01T17:32:28Z"
               likeNumber:
                 description: Number of likes on the photo
                 type: integer
@@ -413,7 +437,7 @@ components:
       schema:
         description: "Like ID"
         type: string
-        pattern: 'ˆ.*?$'
+        pattern: '^.*?$'
         example: JKW
         readOnly: true
         minLength: 3
@@ -427,7 +451,7 @@ components:
       schema:
         description: "Comment ID"
         type: string
-        pattern: 'ˆ.*?$'
+        pattern: '^.*?$'
         example: KIS8
         readOnly: true
         minLength: 3
@@ -440,7 +464,7 @@ components:
       schema:
         description: "Follow ID"
         type: string
-        pattern: 'ˆ.*?$'
+        pattern: '^.*?$'
         example: JSL3
         readOnly: true
         minLength: 3
@@ -453,7 +477,7 @@ components:
       schema:
         description: "Ban ID"
         type: string
-        pattern: 'ˆ.*?$'
+        pattern: '^.*?$'
         example: JD33
         readOnly: true
         minLength: 3
@@ -499,6 +523,7 @@ paths:
           content:
             application/json:
               schema:
+                description: login
                 type: object
                 properties:
                   identifier:
@@ -509,7 +534,7 @@ paths:
         "400": { $ref: "#/components/responses/BadRequest" }
         "401": { $ref: "#/components/responses/UnauthorizedError" }
         "500": { $ref: "#/components/responses/InternalServerError" }
-  /user/{username}/setusername:
+  /user/{username}:
     parameters:
       - $ref : "#/components/parameters/username"
     put:
@@ -534,7 +559,6 @@ paths:
         "400": { $ref: "#/components/responses/BadRequest" }
         "401": { $ref: "#/components/responses/UnauthorizedError" }
         "500": { $ref: "#/components/responses/InternalServerError" }
- 
   /user/{username}/photo/{photoID}:
     parameters:
       - $ref : "#/components/parameters/username"
@@ -605,7 +629,7 @@ paths:
       - $ref : "#/components/parameters/likeID"
 
     put: 
-      operationId: likePhotos
+      operationId: likePhoto
       summary: Like a photo 
       tags: ["Like"]
       security:
@@ -756,26 +780,25 @@ paths:
         "500": { $ref: "#/components/responses/InternalServerError" }   
   /user/{username}/follow:
 
-      parameters: 
-        - $ref : "#/components/parameters/username"
-      get:
-        operationId: getFollow
-        tags: ["Follow"]
-        security:
-          - bearerAuth : []
-        summary: Return follow
-        description: |
-          Return the follow.
-        responses:
-          "200":
-            description: Follow founded correctly.
-            content:
-              application/json:
-                schema: { $ref: '#/components/schemas/follow'}
-          "400": { $ref: "#/components/responses/BadRequest" }
-          "401": { $ref: "#/components/responses/UnauthorizedError" }
-          "500": { $ref: "#/components/responses/InternalServerError" }  
-    
+    parameters: 
+      - $ref : "#/components/parameters/username"
+    get:
+      operationId: getFollow
+      tags: ["Follow"]
+      security:
+        - bearerAuth : []
+      summary: Return follow
+      description: |
+        Return the follow.
+      responses:
+        "200":
+          description: Follow founded correctly.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/follow'}
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/UnauthorizedError" }
+        "500": { $ref: "#/components/responses/InternalServerError" }  
   /user/{username}/ban/{banID}:
     parameters:
       - $ref : "#/components/parameters/username"
@@ -813,25 +836,25 @@ paths:
         "500": { $ref: "#/components/responses/InternalServerError" }  
   /user/{username}/ban:
 
-      parameters: 
-        - $ref : "#/components/parameters/username"
-      get:
-        operationId: getBan
-        tags: ["Ban"]
-        security:
-          - bearerAuth : []
-        summary: Return Ban
-        description: |
-          Return the ban founded.
-        responses:
-          "200":
-            description: Ban founded correctly.
-            content:
-              application/json:
-                schema: { $ref: '#/components/schemas/ban'}
-          "400": { $ref: "#/components/responses/BadRequest" }
-          "401": { $ref: "#/components/responses/UnauthorizedError" }
-          "500": { $ref: "#/components/responses/InternalServerError" }   
+    parameters: 
+      - $ref : "#/components/parameters/username"
+    get:
+      operationId: getBan
+      tags: ["Ban"]
+      security:
+        - bearerAuth : []
+      summary: Return Ban
+      description: |
+        Return the ban founded.
+      responses:
+        "200":
+          description: Ban founded correctly.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ban'}
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/UnauthorizedError" }
+        "500": { $ref: "#/components/responses/InternalServerError" }   
   /user/{username}/profile:
     parameters: 
       - $ref: "#/components/parameters/username"
