@@ -528,6 +528,7 @@ paths:
                   identifier:
                   # change here if you decide to use an integer
                   # or any other type of identifier
+                    description: login
                     type: string
                     example: "abcdef012345"
         "400": { $ref: "#/components/responses/BadRequest" }
