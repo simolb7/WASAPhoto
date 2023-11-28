@@ -65,7 +65,42 @@ components:
           minLength: 3
           maxLength: 16
 
-    photo:
+    photoRequest:
+      title: Photo
+      description: "Photo schema"
+      type: object
+      properties: 
+        userID:
+          description: Unique photo identifier.
+          type: string
+          pattern: '^.*?$'
+          example: 56A
+          minLength: 3
+          maxLength: 16
+        file:
+          description: file path
+          type: string
+          format: binary
+          minLength: 1
+          maxLength: 999
+        dateTime:
+          description: Date and time when photo was uploaded
+          type: string
+          format: date-time
+          example: "2023-11-03T17:32:28Z"
+          minLength: 20
+          maxLength: 50
+        likeNumber:
+          description: Number of likes on the photo
+          type: integer
+          example: 0
+          minimum: 0
+        commentNumber:
+          description: Number of comment on the photo
+          type: integer
+          example: 0
+          minimum: 0
+    photoResponse:
       title: Photo
       description: "Photo schema"
       type: object
@@ -142,7 +177,40 @@ components:
           pattern: '^.*?$'
           example: 56A
           readOnly: true
-    comment:
+    commentRequest:
+      title: comment
+      description: "Comment schema"
+      type: object
+      properties: 
+        photoOwner:
+          description:  Owner of the photo.
+          type: string
+          pattern: '^.*?$'
+          example: 56A
+          minLength: 3
+          maxLength: 16
+        photoID:
+          description: Unique photo identifier.
+          type: string
+          pattern: '^.*?$'
+          example: 472S
+          minLength: 3
+          maxLength: 16
+        userID:
+          description: Unique user identifier.
+          type: string
+          pattern: '^.*?$'
+          example: 56A
+          minLength: 3
+          maxLength: 16
+        content:
+          description: Content of the comment
+          type: string
+          example: "Hi to everyone"
+          pattern: '^.*?$'
+          minLength: 3
+          maxLength: 16
+    commentResponse:
       title: comment
       description: "Comment schema"
       type: object
@@ -419,19 +487,62 @@ components:
       in: path
       required: true
       description: "Username's user."
-    photoID:
+    photoIDPathParam:
       schema:
-          description: photo schema.
-          type: string
-          pattern: '^.*?$'
-          example: JK2
-          readOnly: true
-          minLength: 3
-          maxLength: 15
+        description: photo schema.
+        type: string
+        pattern: '^.*?$'
+        example: JK2
+        readOnly: true
+        minLength: 3
+        maxLength: 15
       name: photoID
       in: path
       required: true
       description: "Unique ID of a specific photo"
+
+    photoIDQueryParam:
+      schema:
+        description: photo schema.
+        type: string
+        pattern: '^.*?$'
+        example: JK2
+        readOnly: true
+        minLength: 3
+        maxLength: 15
+      name: photoID
+      in: query
+      required: false
+      description: "Unique ID of a specific photo"
+    
+    commentIDPathParam:
+      schema:
+        description: "Comment ID"
+        type: string
+        pattern: '^.*?$'
+        example: KIS8
+        readOnly: true
+        minLength: 3
+        maxLength: 16
+      name: commentID
+      in: path
+      required: true
+      description: "Unique ID of a specific comment"
+      
+    commentIDQueryParam:
+      schema:
+        description: "Comment ID"
+        type: string
+        pattern: '^.*?$'
+        example: KIS8
+        readOnly: true
+        minLength: 3
+        maxLength: 16
+      name: commentID
+      in: query
+      required: false
+      description: "Unique ID of a specific comment"
+      
     likeID:
       schema:
         description: "Like ID"
@@ -446,19 +557,7 @@ components:
       required: true
       description: "Unique ID of a specific like"
 
-    commentID:
-      schema:
-        description: "Comment ID"
-        type: string
-        pattern: '^.*?$'
-        example: KIS8
-        readOnly: true
-        minLength: 3
-        maxLength: 16
-      name: commentID
-      in: path
-      required: true
-      description: "Unique ID of a specific comment"
+    
     followID:
       schema:
         description: "Follow ID"
@@ -528,7 +627,6 @@ paths:
                   identifier:
                   # change here if you decide to use an integer
                   # or any other type of identifier
-                    description: login
                     type: string
                     example: "abcdef012345"
         "400": { $ref: "#/components/responses/BadRequest" }
@@ -562,29 +660,7 @@ paths:
   /user/{username}/photo/{photoID}:
     parameters:
       - $ref : "#/components/parameters/username"
-      - $ref : "#/components/parameters/photoID"
-    put: 
-      operationId: uploadPhoto
-      summary: Upload a photo
-      description: |-
-          Upload photo from the body of the request    
-      security:
-        - bearerAuth : []
-      requestBody:
-        content: 
-          application/json:
-            schema: { $ref: "#/components/schemas/user"}
-        required: true
-      tags: ["Photo"]
-      responses:
-        "200":
-          description: Photo upload set successfully
-          content:
-            application/json:
-              schema: { $ref: "#/components/schemas/photo"}
-        "400": { $ref: "#/components/responses/BadRequest" }
-        "401": { $ref: "#/components/responses/UnauthorizedError" }
-        "500": { $ref: "#/components/responses/InternalServerError" }
+      - $ref : "#/components/parameters/photoIDPathParam"
     delete:
       operationId: deletePhoto
       summary: Delete a photo
@@ -602,15 +678,40 @@ paths:
         "401": { $ref: "#/components/responses/UnauthorizedError" }
         "500": { $ref: "#/components/responses/InternalServerError" }
   /user/{username}/photo:
-
-      parameters: 
-        - $ref : "#/components/parameters/username"
-      get:
+    parameters: 
+      - $ref: '#/components/parameters/username'
+  
+    post: 
+        operationId: uploadPhoto
+        summary: Upload a photo
+        description: |-
+          Upload photo from the body of the request    
+        security:
+          - bearerAuth: []
+        requestBody:
+          content: 
+            application/json:
+              schema: { $ref: "#/components/schemas/photoRequest"}
+          required: true
+        tags: ["Photo"]
+        responses:
+          "201":
+            description: Photo upload set successfully
+            content:
+              application/json:
+                schema: { $ref: "#/components/schemas/photoResponse"}
+          "400": { $ref: "#/components/responses/BadRequest" }
+          "401": { $ref: "#/components/responses/UnauthorizedError" }
+          "500": { $ref: "#/components/responses/InternalServerError" }
+      
+    get:
         operationId: getUserPhotos
         tags: ["Photo"]
         security:
           - bearerAuth : []
         summary: Return user's photo
+        parameters:
+        - $ref : "#/components/parameters/photoIDQueryParam"
         description: |
           Return the photos founded.
         responses:
@@ -625,7 +726,7 @@ paths:
   /user/{username}/photo/{photoID}/like/{likeID}:
     parameters:
       - $ref : "#/components/parameters/username"
-      - $ref : "#/components/parameters/photoID"
+      - $ref : "#/components/parameters/photoIDPathParam"
       - $ref : "#/components/parameters/likeID"
 
     put: 
@@ -663,7 +764,7 @@ paths:
   /user/{username}/photo/{photoID}/like:
     parameters: 
       - $ref: "#/components/parameters/username"
-      - $ref : "#/components/parameters/photoID"
+      - $ref : "#/components/parameters/photoIDPathParam"
     get:
       operationId: getLike
       tags: ["Like"]
@@ -684,27 +785,9 @@ paths:
   /user/{username}/photo/{photoID}/comment/{commentID}:
     parameters:
       - $ref : "#/components/parameters/username"
-      - $ref : "#/components/parameters/photoID"
-      - $ref : "#/components/parameters/commentID"
-      
+      - $ref : "#/components/parameters/photoIDPathParam"
+      - $ref : "#/components/parameters/commentIDPathParam"
 
-    put: 
-      operationId: commentPhoto
-      summary: Comment a photo 
-      tags: ["Comment"]
-      security:
-          - bearerAuth : []
-      description: Add comment in the system
-      responses:
-        "200":
-          description: Like added correctly
-          content:
-            application/json:
-              schema: { $ref: "#/components/schemas/comment"}
-        "400": { $ref: "#/components/responses/BadRequest" }
-        "401": { $ref: "#/components/responses/UnauthorizedError" }
-        "500": { $ref: "#/components/responses/InternalServerError" }
-          
     delete: 
       operationId: uncommentPhoto
       summary: Uncomment a photo
@@ -723,13 +806,38 @@ paths:
   /user/{username}/photo/{photoID}/comment:
     parameters: 
       - $ref: "#/components/parameters/username"
-      - $ref : "#/components/parameters/photoID"
+      - $ref : "#/components/parameters/photoIDPathParam"
+
+    post: 
+      operationId: commentPhoto
+      summary: Comment a photo 
+      tags: ["Comment"]
+      security:
+          - bearerAuth : []
+      description: Add comment in the system
+      requestBody:
+        content: 
+          application/json:
+            schema: { $ref: '#/components/schemas/commentRequest'}
+      responses:
+        "201":
+          description: Comment created succesfully
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/commentResponse'}
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/UnauthorizedError" }
+        "500": { $ref: "#/components/responses/InternalServerError" }
+          
+
     get:
       operationId: getComment
       tags: ["Comment"]
       security:
           - bearerAuth : []
       summary: Return Comment
+      parameters:
+      - $ref: "#/components/parameters/commentIDQueryParam"  
       description: |
         Return comment of a specific photo.
       responses:
@@ -737,7 +845,7 @@ paths:
           description: Comment found correctly.
           content:
             application/json:
-              schema: { $ref: '#/components/schemas/comment'}
+              schema: { $ref: '#/components/schemas/commentResponse'}
         "400": { $ref: "#/components/responses/BadRequest" }
         "401": { $ref: "#/components/responses/UnauthorizedError" }
         "500": { $ref: "#/components/responses/InternalServerError" } 
