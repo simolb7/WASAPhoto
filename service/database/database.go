@@ -17,24 +17,27 @@ var ErrBanDoesNotExist = errors.New("Ban does not exist")
 var ErrFollowDoesNotExist = errors.New("Follow does not exist")
 var ErrCommentDoesNotExist = errors.New("Comment does not exist")
 var ErrLikeDoesNotExist = errors.New("Like does not exist")
+var ErrUsernameAlreadyExists = errors.New("Username already exist")
 
 type User struct {
 	Id       uint64 `json:"identifier"`
 	Username string `json:"username"`
 }
 
-type PhotoStream struct {
-	Id            uint64 `json:"id"`
-	UserID        uint64 `json:"userId"`
-	File          []byte `json:"file"`
-	Date          string `json:"date"`
-	LikeNumber    int    `json:"likeNumber"`
-	CommentNumber int    `json:"commentNumber"`
-}
+/*
+	type PhotoStream struct {
+		Id            uint64 `json:"id"`
+		UserID        uint64 `json:"userId"`
+		File          []byte `json:"file"`
+		Date          string `json:"date"`
+		LikeNumber    int    `json:"likeNumber"`
+		CommentNumber int    `json:"commentNumber"`
+	}
+*/
 
 type Stream struct {
-	Id     uint64        `json:"identifier"`
-	Photos []PhotoStream `json:"photoStream"`
+	Id     uint64  `json:"identifier"`
+	Photos []Photo `json:"Photo"`
 }
 
 type Follow struct {
@@ -58,6 +61,12 @@ type Photo struct {
 	CommentNumber int    `json:"commentNumber"`
 }
 
+type Photos struct {
+	RequestUser uint64  `json:"requestUser"`
+	Identifier  uint64  `json:"identifier"`
+	Photos      []Photo `json:"photos"`
+}
+
 type Like struct {
 	PhotoOwner uint64 `json:"photoOwner"`
 	PhotoId    uint64 `json:"photoIdentifier"`
@@ -73,6 +82,13 @@ type Comment struct {
 	Content    string `json:"content"`
 }
 
+type Comments struct {
+	RequestId  uint64    `json:"requestId"`
+	PhotoId    uint64    `json:"photoId"`
+	PhotoOwner uint64    `json:"identifier"`
+	Comments   []Comment `json:"comments"`
+}
+
 // AppDatabase is the high level interface for the DB
 type AppDatabase interface {
 	CreateUser(User) (User, error)
@@ -81,32 +97,35 @@ type AppDatabase interface {
 	CheckUserById(User) (User, error)
 	CheckUserByUsername(User) (User, error)
 	CheckUser(User) (User, error)
-	GetStream(u User) ([]PhotoStream, error)
+	GetStream(u User) ([]Photo, error)
 
 	InsertPhoto(p Photo) (Photo, error)
 	RemovePhoto(id uint64) error
 	GetPhotos(u User, token uint64) ([]Photo, error)
 	GetPhotosCount(id uint64) (int, error)
+	CheckPhoto(p Photo) (Photo, error)
 
 	InsertLike(l Like) (Like, error)
 	RemoveLike(l Like) error
 	RemoveLikes(user uint64, banned uint64) error
 	GetLikeCount(photoid uint64) (int, error)
+	GetLike(photoid uint64, token uint64) (Like, error)
 
 	InsertFollow(f Follow) (Follow, error)
-	RemoveFollow(f Follow) error
+	RemoveFollow(FollowId uint64, UserId uint64, FollowedId uint64) error
 	GetFollowersCount(id uint64) (int, error)
 	GetFollowedCount(id uint64) (int, error)
-	GetFollowers(u User, token uint64) (Follow, error)
+	GetFollower(u User, token uint64) (Follow, error)
 
 	InsertComment(c Comment) (Comment, error)
 	RemoveComment(c Comment) error
 	RemoveComments(user uint64, banned uint64) error
 	GetCommentsCount(photoid uint64) (int, error)
+	GetComments(photoid uint64) ([]Comment, error)
 
-	InserBan(b Ban) (Ban, error)
+	InsertBan(b Ban) (Ban, error)
 	RemoveBan(b Ban) error
-	GetBans(u User, token uint64) (Ban, error)
+	GetBan(u User, token uint64) (Ban, error)
 	BannedUserCheck(target User, request User) (bool, error)
 
 	Ping() error
@@ -137,14 +156,14 @@ func New(db *sql.DB) (AppDatabase, error) {
 			Username TEXT NOT NULL UNIQUE
 			);`
 		photosDatabase := `CREATE TABLE photos (
-			Id INTEGER NOT NULL PRIMARY KEY, 
+			Id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, 
 			userId INTEGER NOT NULL,
 			photo BLOB,
 			date TEXT ,
 			FOREIGN KEY (userId) REFERENCES users(Id)
 			);`
 		likesDatabase := `CREATE TABLE likes (
-			Id INTEGER NOT NULL PRIMARY KEY,
+			Id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
 			userId INTEGER NOT NULL,
 			photoId INTEGER NOT NULL,
 			photoOwner INTEGER NOT NULL,
@@ -152,7 +171,7 @@ func New(db *sql.DB) (AppDatabase, error) {
 			FOREIGN KEY (photoId) REFERENCES photos(Id)
 			);`
 		commentsDatabase := `CREATE TABLE comments (
-			Id INTEGER NOT NULL PRIMARY KEY,
+			Id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
 			userId INTEGER NOT NULL,
 			photoId INTEGER NOT NULL,
 			photoOwner INTEGER NOT NULL,
@@ -161,13 +180,13 @@ func New(db *sql.DB) (AppDatabase, error) {
 			FOREIGN KEY (photoId) REFERENCES photos(Id)
 			);`
 		bansDatabase := `CREATE TABLE bans (
-			banId INTEGER NOT NULL PRIMARY KEY,
+			banId INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
 			bannedId INTEGER NOT NULL,
 			userId INTEGER NOT NULL,
 			FOREIGN KEY (userId) REFERENCES users(Id)
 			);`
 		followersDatabase := `CREATE TABLE followers (
-			Id INTEGER NOT NULL PRIMARY KEY,
+			Id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
 			followerId INTEGER NOT NULL,
 			userId INTEGER NOT NULL,
 			FOREIGN KEY (userId) REFERENCES users(Id)

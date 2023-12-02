@@ -4,17 +4,23 @@ import "database/sql"
 
 // Database function that adds a follow to another user
 func (db *appdbimpl) InsertFollow(f Follow) (Follow, error) {
-	_, err := db.c.Exec("INSERT INTO followers (id, userId, userFollowed) VALUES (?,?,?)", f.Id, f.UserId, f.UserFollowedID)
+	res, err := db.c.Exec("INSERT INTO followers (userId, userFollowed) VALUES (?,?)", f.UserId, f.UserFollowedID)
 	if err != nil {
 		return f, err
 	}
+	lastInsertID, err := res.LastInsertId()
+
+	if err != nil {
+		return f, err
+	}
+	f.Id = uint64(lastInsertID)
 	return f, nil
 
 }
 
 // Database function that removes a follow to another user
-func (db *appdbimpl) RemoveFollow(f Follow) error {
-	res, err := db.c.Exec("DELETE FROM followers WHERE id = ? AND userId = ? AND userFollowed = ?", f.Id, f.UserId, f.UserFollowedID)
+func (db *appdbimpl) RemoveFollow(FollowId uint64, UserId uint64, FollowedId uint64) error {
+	res, err := db.c.Exec("DELETE FROM followers WHERE id = ? AND userId = ? AND userFollowed = ?", FollowId, UserId, FollowedId)
 
 	if err != nil {
 		return err
@@ -22,7 +28,8 @@ func (db *appdbimpl) RemoveFollow(f Follow) error {
 	affected, err := res.RowsAffected()
 	if err != nil {
 		return err
-	} else if affected == 0 {
+	}
+	if affected == 0 {
 		return ErrFollowDoesNotExist
 	}
 	return nil
@@ -34,8 +41,9 @@ func (db *appdbimpl) GetFollowersCount(id uint64) (int, error) {
 
 	if err := db.c.QueryRow("SELECT COUNT(*) FROM followers WHERE userFollowed = ?", id).Scan(&count); err != nil {
 		if err == sql.ErrNoRows {
-			return count, ErrFollowDoesNotExist
+			return 0, nil
 		}
+		return count, err
 	}
 	return count, nil
 }
@@ -46,16 +54,17 @@ func (db *appdbimpl) GetFollowedCount(id uint64) (int, error) {
 
 	if err := db.c.QueryRow("SELECT COUNT(*) FROM followers WHERE userId = ?", id).Scan(&count); err != nil {
 		if err == sql.ErrNoRows {
-			return count, ErrFollowDoesNotExist
+			return 0, nil
 		}
+		return count, err
 	}
 	return count, nil
 }
 
 // Database function that returns the users follow
-func (db *appdbimpl) GetFollowers(u User, token uint64) (Follow, error) {
+func (db *appdbimpl) GetFollower(u User, token uint64) (Follow, error) {
 	var follow Follow
-	if err := db.c.QueryRow("SELECT Id, userId, userFollowed from followers WHERE userFollowed = ?", u.Id, token).Scan(&follow.Id, &follow.UserFollowedID, &follow.UserId); err != nil {
+	if err := db.c.QueryRow("SELECT Id, userId, userFollowed from followers WHERE userFollowed = ?", u.Id, token).Scan(&follow.Id, &follow.UserId, &follow.UserFollowedID); err != nil {
 		if err == sql.ErrNoRows {
 			return follow, ErrFollowDoesNotExist
 		}

@@ -1,16 +1,16 @@
 package api
 
 import (
-	"git.sapienzaapps.it/fantasticcoffee/fantastic-coffee-decaffeinated/service/database"
+	"github.com/simolb7/Private_WasaPhoto/service/database"
 )
 
 type Profile struct {
-	RequestId      uint64 `json:"requestId"`
-	UserId         uint64 `json:"id"`
-	Username       string `json:"username"`
-	NumberFollowes int    `json:"NumberFollowes"`
-	NumberFollowed int    `json:"NumberFollowed"`
-	PhotoCount     int    `json:"photoCount"`
+	RequestId       uint64 `json:"requestId"`
+	UserId          uint64 `json:"id"`
+	Username        string `json:"username"`
+	NumberFollowers int    `json:"NumberFollowers"`
+	NumberFollowed  int    `json:"NumberFollowed"`
+	PhotoCount      int    `json:"photoCount"`
 }
 
 type User struct {

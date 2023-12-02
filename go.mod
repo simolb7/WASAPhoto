@@ -1,5 +1,4 @@
-module git.sapienzaapps.it/fantasticcoffee/fantastic-coffee-decaffeinated
-
+module github.com/simolb7/Private_WasaPhoto
 go 1.17
 
 require (

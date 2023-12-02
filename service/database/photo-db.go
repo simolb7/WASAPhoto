@@ -4,10 +4,18 @@ import "database/sql"
 
 // Database function to upload a photo
 func (db *appdbimpl) InsertPhoto(p Photo) (Photo, error) {
-	_, err := db.c.Exec("INSERT INTO photos (id, userId, photo, date) VALUES (?,?,?,?)", p.PhotoId, p.UserId, p.File, p.Date)
+	result, err := db.c.Exec("INSERT INTO photos (userId, photo, date) VALUES (?,?,?)", p.UserId, p.File, p.Date)
 	if err != nil {
 		return p, err
 	}
+
+	//generate id
+	lastInsertID, err := result.LastInsertId()
+	if err != nil {
+		return p, err
+	}
+
+	p.PhotoId = uint64(lastInsertID)
 	return p, nil
 
 }
@@ -64,10 +72,7 @@ func (db *appdbimpl) GetPhotos(u User, token uint64) ([]Photo, error) {
 		ret = append(ret, b)
 	}
 
-	if rows.Err() != nil {
-		return nil, err
-	}
-	return ret, nil
+	return ret, rows.Err()
 }
 
 // Database function that returns the count of photo uploaded by the user
@@ -75,8 +80,19 @@ func (db *appdbimpl) GetPhotosCount(id uint64) (int, error) {
 	var count int
 	if err := db.c.QueryRow("SELECT COUNT(*) FROM photos WHERE userId = id").Scan(&count); err != nil {
 		if err == sql.ErrNoRows {
-			return count, ErrUserDoesNotExist
+			return count, ErrPhotoDoesNotExist
 		}
 	}
 	return count, nil
+}
+
+// Check if a photo exists
+func (db *appdbimpl) CheckPhoto(p Photo) (Photo, error) {
+	var photo Photo
+	if err := db.c.QueryRow(`SELECT Id, userId, photo, date FROM photos WHERE Id=?`, p.PhotoId).Scan(&photo.PhotoId, &photo.UserId, &photo.File, &photo.Date); err != nil {
+		if err == sql.ErrNoRows {
+			return photo, ErrPhotoDoesNotExist
+		}
+	}
+	return photo, nil
 }
