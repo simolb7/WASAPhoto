@@ -1,7 +1,7 @@
 package api
 
 import (
-	"github.com/simolb7/Private_WasaPhoto/service/database"
+	"github.com/simolb7/WASAPhoto/service/database"
 )
 
 type Profile struct {

@@ -73,6 +73,17 @@ func (db *appdbimpl) GetUserId(username string) (User, error) {
 	return user, nil
 }
 
+/*
+	func (db *appdbimpl) GetUserById(id int) (User, error) {
+		var user User
+		if err := db.c.QueryRow(`SELECT id, username FROM users WHERE id = ?`, id).Scan(&user.Id); err != nil {
+			if err == sql.ErrNoRows {
+				return user, ErrUserDoesNotExist
+			}
+		}
+		return user, nil
+	}
+*/
 func (db *appdbimpl) CheckUserByUsername(u User) (User, error) {
 	var user User
 	if err := db.c.QueryRow(`SELECT id, username FROM users WHERE username = ?`, u.Username).Scan(&user.Id, &user.Username); err != nil {

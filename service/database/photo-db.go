@@ -32,7 +32,7 @@ func (db *appdbimpl) RemovePhoto(id uint64) error {
 		return err1
 	}
 
-	_, err2 := db.c.Exec("DELETE FROM photos WHERE photoId = ?", id)
+	_, err2 := db.c.Exec("DELETE FROM photos WHERE Id = ?", id)
 	if err2 != nil {
 		return err2
 	}
@@ -78,7 +78,7 @@ func (db *appdbimpl) GetPhotos(u User, token uint64) ([]Photo, error) {
 // Database function that returns the count of photo uploaded by the user
 func (db *appdbimpl) GetPhotosCount(id uint64) (int, error) {
 	var count int
-	if err := db.c.QueryRow("SELECT COUNT(*) FROM photos WHERE userId = id").Scan(&count); err != nil {
+	if err := db.c.QueryRow("SELECT COUNT(*) FROM photos WHERE userId = ?", id).Scan(&count); err != nil {
 		if err == sql.ErrNoRows {
 			return count, ErrPhotoDoesNotExist
 		}

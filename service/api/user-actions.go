@@ -2,7 +2,10 @@ package api
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
+
+	//"strconv"
 
 	"github.com/julienschmidt/httprouter"
 	"github.com/simolb7/WASAPhoto/service/api/reqcontext"
@@ -87,7 +90,7 @@ func (rt *_router) getUserProfile(w http.ResponseWriter, r *http.Request, ps htt
 	}
 
 	user.FromDatabase(dbuser)
-
+	fmt.Printf("Il valore uint64 è: %d\n", user.Id)
 	followersCount, err := rt.db.GetFollowersCount(user.Id)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -156,3 +159,40 @@ func (rt *_router) getMyStream(w http.ResponseWriter, r *http.Request, ps httpro
 	w.WriteHeader(http.StatusOK)
 	_ = json.NewEncoder(w).Encode(photoList)
 }
+
+/*
+func (rt *_router) getUserUsername(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
+	// Ottieni l'ID dalla richiesta
+	id := ps.ByName("id")
+	var user User
+
+	if id == "" {
+		http.Error(w, "L'ID non può essere vuoto", http.StatusBadRequest)
+		return
+	}
+
+	// Converti l'ID in un tipo appropriato (ad esempio, int)
+	idInt, err := strconv.Atoi(id)
+	if err != nil {
+		http.Error(w, "Formato ID non valido", http.StatusBadRequest)
+		return
+	}
+
+	// Ottieni l'username dal database usando l'ID
+	dbuser, err := rt.db.GetUserById(idInt)
+	if err != nil {
+		// Gestisci gli errori specifici
+		if err == database.ErrUserDoesNotExist {
+			http.Error(w, "Utente non trovato", http.StatusNotFound)
+		} else {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
+		return
+	}
+
+	user.FromDatabase(dbuser)
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusCreated)
+	_ = json.NewEncoder(w).Encode(user)
+}
+*/

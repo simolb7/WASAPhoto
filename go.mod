@@ -1,4 +1,4 @@
-module github.com/simolb7/Private_WasaPhoto
+module github.com/simolb7/WASAPhoto
 go 1.17
 
 require (

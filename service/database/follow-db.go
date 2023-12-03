@@ -4,7 +4,7 @@ import "database/sql"
 
 // Database function that adds a follow to another user
 func (db *appdbimpl) InsertFollow(f Follow) (Follow, error) {
-	res, err := db.c.Exec("INSERT INTO followers (userId, userFollowed) VALUES (?,?)", f.UserId, f.UserFollowedID)
+	res, err := db.c.Exec("INSERT INTO followers (userId, followerId) VALUES (?,?)", f.UserId, f.UserFollowedID)
 	if err != nil {
 		return f, err
 	}
@@ -20,7 +20,7 @@ func (db *appdbimpl) InsertFollow(f Follow) (Follow, error) {
 
 // Database function that removes a follow to another user
 func (db *appdbimpl) RemoveFollow(FollowId uint64, UserId uint64, FollowedId uint64) error {
-	res, err := db.c.Exec("DELETE FROM followers WHERE id = ? AND userId = ? AND userFollowed = ?", FollowId, UserId, FollowedId)
+	res, err := db.c.Exec("DELETE FROM followers WHERE id = ? AND userId = ? AND followerId = ?", FollowId, UserId, FollowedId)
 
 	if err != nil {
 		return err
@@ -39,7 +39,7 @@ func (db *appdbimpl) RemoveFollow(FollowId uint64, UserId uint64, FollowedId uin
 func (db *appdbimpl) GetFollowersCount(id uint64) (int, error) {
 	var count int
 
-	if err := db.c.QueryRow("SELECT COUNT(*) FROM followers WHERE userFollowed = ?", id).Scan(&count); err != nil {
+	if err := db.c.QueryRow("SELECT COUNT(*) FROM followers WHERE followerId = ?", id).Scan(&count); err != nil {
 		if err == sql.ErrNoRows {
 			return 0, nil
 		}
@@ -64,7 +64,7 @@ func (db *appdbimpl) GetFollowedCount(id uint64) (int, error) {
 // Database function that returns the users follow
 func (db *appdbimpl) GetFollower(u User, token uint64) (Follow, error) {
 	var follow Follow
-	if err := db.c.QueryRow("SELECT Id, userId, userFollowed from followers WHERE userFollowed = ?", u.Id, token).Scan(&follow.Id, &follow.UserId, &follow.UserFollowedID); err != nil {
+	if err := db.c.QueryRow("SELECT Id, userId, followerId from followers WHERE followerId = ?", u.Id, token).Scan(&follow.Id, &follow.UserId, &follow.UserFollowedID); err != nil {
 		if err == sql.ErrNoRows {
 			return follow, ErrFollowDoesNotExist
 		}

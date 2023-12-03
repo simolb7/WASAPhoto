@@ -98,6 +98,7 @@ type AppDatabase interface {
 	CheckUserByUsername(User) (User, error)
 	CheckUser(User) (User, error)
 	GetStream(u User) ([]Photo, error)
+	//GetUserById(id int) (User, error)
 
 	InsertPhoto(p Photo) (Photo, error)
 	RemovePhoto(id uint64) error
