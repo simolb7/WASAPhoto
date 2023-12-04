@@ -24,11 +24,11 @@ func (rt *_router) Handler() http.Handler {
 		rt.router.PUT("/users/:username/follow/:followid", rt.wrap(rt.followUser))
 		rt.router.DELETE("/users/:username/follow/:followid", rt.wrap(rt.unfollowUser))
 		rt.router.GET("/users/:username/follow", rt.wrap(rt.getFollowers))
-
-		rt.router.PUT("/users/:username/photo/:photoid/like/:likeid", rt.wrap(rt.likePhoto))
-		rt.router.DELETE("/users/:username/photo/:photoid/like/:likeid", rt.wrap(rt.unlikePhoto))
-		rt.router.GET("/users/:username/photo/:photoid/like", rt.wrap(rt.getLikes))
-
+	*/
+	rt.router.PUT("/users/:username/photo/:photoid/like/:likeid/likePhoto", rt.wrap(rt.likePhoto))
+	rt.router.DELETE("/users/:username/photo/:photoid/like/:likeid/unlikePhoto", rt.wrap(rt.unlikePhoto))
+	rt.router.GET("/users/:username/photo/:photoid/like/getLike", rt.wrap(rt.getLike))
+	/*
 		rt.router.POST("/users/:username/photo/:photoid/comment", rt.wrap(rt.commentPhoto))
 		rt.router.DELETE("/users/:username/photo/:photoid/comment/:commentid", rt.wrap(rt.uncommentPhoto))
 		rt.router.GET("/users/:username/photo/:photoid/comment", rt.wrap(rt.getComments))

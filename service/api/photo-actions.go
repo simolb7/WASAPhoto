@@ -40,9 +40,16 @@ func (rt *_router) uploadPhoto(w http.ResponseWriter, r *http.Request, ps httpro
 		return
 
 	}
-
+	romeLocation, err := time.LoadLocation("Europe/Rome")
+	if err != nil {
+		// Gestisci l'errore
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 	// Impostaola data e l'ID dell'utente nella struct photo
-	photo.DateTime = time.Now().Format(time.RFC3339)
+	currentTime := time.Now().In(romeLocation)
+
+	photo.DateTime = currentTime.Format(time.RFC3339)
 	photo.UserId = user.Id
 
 	dbphoto, err := rt.db.InsertPhoto(photo.PhotoToDatabase())
