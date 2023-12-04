@@ -122,7 +122,7 @@ type AppDatabase interface {
 	RemoveComment(c Comment) error
 	RemoveComments(user uint64, banned uint64) error
 	GetCommentsCount(photoid uint64) (int, error)
-	GetComments(photoid uint64) ([]Comment, error)
+	GetComments(photoid uint64, userid uint64) ([]Comment, error)
 
 	InsertBan(b Ban) (Ban, error)
 	RemoveBan(b Ban) error
