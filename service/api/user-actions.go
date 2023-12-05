@@ -2,7 +2,6 @@ package api
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 
 	//"strconv"
@@ -90,7 +89,6 @@ func (rt *_router) getUserProfile(w http.ResponseWriter, r *http.Request, ps htt
 	}
 
 	user.FromDatabase(dbuser)
-	fmt.Printf("Il valore uint64 è: %d\n", user.Id)
 	followersCount, err := rt.db.GetFollowersCount(user.Id)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
