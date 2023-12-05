@@ -64,7 +64,7 @@ func (db *appdbimpl) GetFollowedCount(id uint64) (int, error) {
 // Database function that returns the users follow
 func (db *appdbimpl) GetFollower(u User, token uint64) (Follow, error) {
 	var follow Follow
-	if err := db.c.QueryRow("SELECT Id, userId, followerId from followers WHERE followerId = ?", u.Id, token).Scan(&follow.Id, &follow.UserId, &follow.UserFollowedID); err != nil {
+	if err := db.c.QueryRow("SELECT Id, userId, followerId from followers WHERE followerId = ? AND userId = ?", u.Id, token).Scan(&follow.Id, &follow.UserId, &follow.UserFollowedID); err != nil {
 		if err == sql.ErrNoRows {
 			return follow, ErrFollowDoesNotExist
 		}

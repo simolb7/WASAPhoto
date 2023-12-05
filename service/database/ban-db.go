@@ -20,7 +20,7 @@ func (db *appdbimpl) InsertBan(b Ban) (Ban, error) {
 
 // Database fuction that removes a user ban by another one (banner)
 func (db *appdbimpl) RemoveBan(b Ban) error {
-	res, err := db.c.Exec("DELETE FROM bans WHERE id = ? AND userId = ? AND bannedId = ?", b.BanId, b.UserId, b.UserBannedId)
+	res, err := db.c.Exec("DELETE FROM bans WHERE banId = ? AND userId = ? AND bannedId = ?", b.BanId, b.UserId, b.UserBannedId)
 	if err != nil {
 		return err
 	}
