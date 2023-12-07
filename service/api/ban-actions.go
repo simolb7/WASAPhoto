@@ -2,6 +2,7 @@ package api
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"strconv"
@@ -95,7 +96,7 @@ func (rt *_router) unbanUser(w http.ResponseWriter, r *http.Request, ps httprout
 	ban.UserId = token
 	ban.BannedId = user.Id
 	err = rt.db.RemoveBan(ban.BanToDatabase())
-	if err == database.ErrBanDoesNotExist {
+	if errors.Is(err, database.ErrBanDoesNotExist) {
 		http.Error(w, err.Error(), http.StatusNotFound)
 		return
 	}

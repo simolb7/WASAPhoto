@@ -2,6 +2,7 @@ package api
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"strconv"
@@ -91,12 +92,12 @@ func (rt *_router) uncommentPhoto(w http.ResponseWriter, r *http.Request, ps htt
 
 	err = rt.db.RemoveComment(comment.CommentToDatabase())
 
-	if err == database.ErrCommentDoesNotExist {
+	if errors.Is(err, database.ErrCommentDoesNotExist) {
 		http.Error(w, err.Error(), http.StatusNotFound)
 		return
 	}
 	if err != nil {
-		//registro un messaggio di errore, aggiungo un campo "id" al log per indicare l'ID del commrnto
+		// registro un messaggio di errore, aggiungo un campo "id" al log per indicare l'ID del commrnto
 		http.Error(w, fmt.Sprintf("Errore durante l'eliminazione del commento con ID %d", commentid), http.StatusInternalServerError)
 		return
 	}

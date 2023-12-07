@@ -15,8 +15,8 @@ func (rt *_router) followUser(w http.ResponseWriter, r *http.Request, ps httprou
 	var follow Follow
 	var user User
 
-	//utente da followare
-	//username := ps.ByName("username")
+	// utente da followare
+	// username := ps.ByName("username")
 
 	var requestData map[string]string
 	err := json.NewDecoder(r.Body).Decode(&requestData)
@@ -66,7 +66,7 @@ func (rt *_router) unfollowUser(w http.ResponseWriter, r *http.Request, ps httpr
 	var user User
 
 	// Validazione dell'utente da unfolloware
-	//username := ps.ByName("username")
+	// username := ps.ByName("username")
 
 	var requestData map[string]string
 	err := json.NewDecoder(r.Body).Decode(&requestData)
@@ -107,7 +107,7 @@ func (rt *_router) unfollowUser(w http.ResponseWriter, r *http.Request, ps httpr
 		return
 	}
 	if err != nil {
-		//registro un messaggio di errore, aggiungo un campo "id" al log per indicare l'ID del commrnto
+		// registro un messaggio di errore, aggiungo un campo "id" al log per indicare l'ID del commrnto
 		http.Error(w, fmt.Sprintf("Errore durante l'eliminazione del follow con ID %d", id), http.StatusInternalServerError)
 		return
 	}
@@ -131,6 +131,7 @@ func (rt *_router) getFollower(w http.ResponseWriter, r *http.Request, ps httpro
 		http.Error(w, "Il campo 'username' è obbligatorio", http.StatusBadRequest)
 		return
 	}
+
 	user.Username = userFollowed
 	dbuser, err := rt.db.CheckUserByUsername(user.ToDatabase())
 	if err != nil {

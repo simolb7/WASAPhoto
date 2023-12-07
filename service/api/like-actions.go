@@ -31,11 +31,14 @@ func (rt *_router) likePhoto(w http.ResponseWriter, r *http.Request, ps httprout
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	like.LikeId = likeid
+
 	token := getToken(r.Header.Get("Authorization"))
+
+	like.LikeId = likeid
 	like.UserId = token
 	like.PhotoId = photoid
 	like.PhotoOwner = user.Id
+
 	dblike, err := rt.db.InsertLike(like.LikeToDatabase())
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -85,7 +88,8 @@ func (rt *_router) unlikePhoto(w http.ResponseWriter, r *http.Request, ps httpro
 }
 
 func (rt *_router) getLike(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
-	//ritorna le informazioni di un like
+
+	// ritorna le informazioni di un like
 	var user User
 	var photo Photo
 	var requestUser User
@@ -96,6 +100,7 @@ func (rt *_router) getLike(w http.ResponseWriter, r *http.Request, ps httprouter
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+
 	requestUser.FromDatabase(dbrequestuser)
 	username := ps.ByName("username")
 	dbuser, err := rt.db.GetUserId(username)
@@ -103,6 +108,7 @@ func (rt *_router) getLike(w http.ResponseWriter, r *http.Request, ps httprouter
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+
 	user.FromDatabase(dbuser)
 	photoid, err := strconv.ParseUint(ps.ByName("photoid"), 10, 64)
 	if err != nil {

@@ -8,18 +8,17 @@ import (
 func (rt *_router) Handler() http.Handler {
 	rt.router.POST("/session", rt.wrap(rt.doLogin))
 
-	rt.router.PUT("/user/:username/setusername", rt.wrap(rt.setMyUserName))
-	rt.router.GET("/user/:username/stream", rt.wrap(rt.getMyStream))
-	rt.router.GET("/user/:username/profile", rt.wrap(rt.getUserProfile))
-	//rt.router.GET("/session", rt.wrap(rt.GetUserId))
+	rt.router.PUT("/user/:username", rt.wrap(rt.setMyUserName))
+	rt.router.GET("/user/:username", rt.wrap(rt.getMyStream))
+	rt.router.GET("/user/:username", rt.wrap(rt.getUserProfile))
 
-	rt.router.POST("/user/:username/photo/uploadPhoto", rt.wrap(rt.uploadPhoto))
-	rt.router.DELETE("/user/:username/photo/:photoid/deletePhoto", rt.wrap(rt.deletePhoto))
-	rt.router.GET("/user/:username/photo/getUserPhotos", rt.wrap(rt.getUserPhotos))
+	rt.router.POST("/user/:username/photo", rt.wrap(rt.uploadPhoto))
+	rt.router.DELETE("/user/:username/photo/:photoid", rt.wrap(rt.deletePhoto))
+	rt.router.GET("/user/:username/photo", rt.wrap(rt.getUserPhotos))
 
 	rt.router.PUT("/users/:username/ban", rt.wrap(rt.banUser))
-	rt.router.DELETE("/users/:username/ban/:banid/unBan", rt.wrap(rt.unbanUser))
-	rt.router.GET("/users/:username/ban/getBan", rt.wrap(rt.getBans))
+	rt.router.DELETE("/users/:username/ban/:banid", rt.wrap(rt.unbanUser))
+	rt.router.GET("/users/:username/ban", rt.wrap(rt.getBans))
 
 	rt.router.PUT("/users/:username/follow", rt.wrap(rt.followUser))
 	rt.router.DELETE("/users/:username/follow/:followid/unfollow", rt.wrap(rt.unfollowUser))

@@ -529,20 +529,6 @@ components:
       required: true
       description: "Unique ID of a specific comment"
       
-    commentIDQueryParam:
-      schema:
-        description: "Comment ID"
-        type: string
-        pattern: '^.*?$'
-        example: KIS8
-        readOnly: true
-        minLength: 3
-        maxLength: 16
-      name: commentID
-      in: query
-      required: false
-      description: "Unique ID of a specific comment"
-      
     likeID:
       schema:
         description: "Like ID"
@@ -729,23 +715,6 @@ paths:
       - $ref : "#/components/parameters/username"
       - $ref : "#/components/parameters/photoIDPathParam"
       - $ref : "#/components/parameters/likeID"
-
-    put: 
-      operationId: likePhoto
-      summary: Like a photo 
-      tags: ["Like"]
-      security:
-          - bearerAuth : []
-      description: Add like in the system
-      responses:
-        "200":
-          description: Like added correctly
-          content:
-            application/json:
-              schema: { $ref: "#/components/schemas/like"}
-        "400": { $ref: "#/components/responses/BadRequest" }
-        "401": { $ref: "#/components/responses/UnauthorizedError" }
-        "500": { $ref: "#/components/responses/InternalServerError" }
           
     delete: 
       operationId: unlikePhoto
@@ -766,6 +735,23 @@ paths:
     parameters: 
       - $ref: "#/components/parameters/username"
       - $ref : "#/components/parameters/photoIDPathParam"
+    
+    post: 
+      operationId: likePhoto
+      summary: Like a photo 
+      tags: ["Like"]
+      security:
+          - bearerAuth : []
+      description: Add like in the system
+      responses:
+        "201":
+          description: Like added correctly
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/like"}
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/UnauthorizedError" }
+        "500": { $ref: "#/components/responses/InternalServerError" }
     get:
       operationId: getLike
       tags: ["Like"]
@@ -837,8 +823,6 @@ paths:
       security:
           - bearerAuth : []
       summary: Return Comment
-      parameters:
-      - $ref: "#/components/parameters/commentIDQueryParam"  
       description: |
         Return comment of a specific photo.
       responses:
@@ -854,23 +838,6 @@ paths:
     parameters:
       - $ref : "#/components/parameters/username"
       - $ref : "#/components/parameters/followID"
-    
-    put: 
-      operationId: followUser
-      summary: Follow User 
-      tags: ["Follow"]
-      security:
-          - bearerAuth : []
-      description: Add Follow in the system
-      responses:
-        "200":
-          description: Follow added correctly
-          content:
-            application/json:
-              schema: { $ref: "#/components/schemas/follow"}
-        "400": { $ref: "#/components/responses/BadRequest" }
-        "401": { $ref: "#/components/responses/UnauthorizedError" }
-        "500": { $ref: "#/components/responses/InternalServerError" }
 
     delete:
       operationId: unfollowUser
@@ -891,6 +858,24 @@ paths:
 
     parameters: 
       - $ref : "#/components/parameters/username"
+        
+    post: 
+      operationId: followUser
+      summary: Follow User 
+      tags: ["Follow"]
+      security:
+          - bearerAuth : []
+      description: Add Follow in the system
+      responses:
+        "201":
+          description: Follow added correctly
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/follow"}
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/UnauthorizedError" }
+        "500": { $ref: "#/components/responses/InternalServerError" }
+
     get:
       operationId: getFollow
       tags: ["Follow"]
@@ -911,23 +896,7 @@ paths:
   /user/{username}/ban/{banID}:
     parameters:
       - $ref : "#/components/parameters/username"
-      - $ref : "#/components/parameters/banID"
-    put: 
-      operationId: banUser
-      summary: Ban User 
-      tags: ["Ban"]
-      security:
-          - bearerAuth : []
-      description: Add Ban in the system
-      responses:
-        "200":
-          description: Ban executed correctly
-          content:
-            application/json:
-              schema: { $ref: "#/components/schemas/ban"}
-        "400": { $ref: "#/components/responses/BadRequest" }
-        "401": { $ref: "#/components/responses/UnauthorizedError" }
-        "500": { $ref: "#/components/responses/InternalServerError" }
+      - $ref : '#/components/parameters/banID'
     delete:
       operationId: unbanUser
       summary: Unban User 
@@ -944,9 +913,25 @@ paths:
         "401": { $ref: "#/components/responses/UnauthorizedError" }
         "500": { $ref: "#/components/responses/InternalServerError" }  
   /user/{username}/ban:
-
     parameters: 
       - $ref : "#/components/parameters/username"
+    post: 
+      operationId: banUser
+      summary: Ban User 
+      tags: ["Ban"]
+      security:
+          - bearerAuth : []
+      description: Add Ban in the system
+      responses:
+        "201":
+          description: Ban executed correctly
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ban"}
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/UnauthorizedError" }
+        "500": { $ref: "#/components/responses/InternalServerError" }
+
     get:
       operationId: getBan
       tags: ["Ban"]

@@ -17,7 +17,7 @@ func (db *appdbimpl) CreateUser(u User) (User, error) {
 		return user, ErrUserDoesNotExist
 	}
 
-	//creo utente
+	// creo utente
 	res, err := db.c.Exec("INSERT INTO users(username) VALUES (?)", u.Username)
 	LastInsertID, err := res.LastInsertId()
 	if err != nil {
@@ -39,7 +39,7 @@ func (db *appdbimpl) SetUsername(u User, newusername string) (User, error) {
 		// Un errore diverso si è verificato durante la query
 		return u, err
 	}
-	//if it is all correct, change username
+	// if it is all correct, change username
 	res, err := db.c.Exec("UPDATE users SET Username=? WHERE id=? AND Username=?", u.Username, u.Id, newusername)
 
 	if err != nil {
@@ -67,23 +67,12 @@ func (db *appdbimpl) GetUserId(username string) (User, error) {
 			return user, ErrUserDoesNotExist
 		}
 
-		//for manage general errors
+		// for manage general errors
 		return user, err
 	}
 	return user, nil
 }
 
-/*
-	func (db *appdbimpl) GetUserById(id int) (User, error) {
-		var user User
-		if err := db.c.QueryRow(`SELECT id, username FROM users WHERE id = ?`, id).Scan(&user.Id); err != nil {
-			if err == sql.ErrNoRows {
-				return user, ErrUserDoesNotExist
-			}
-		}
-		return user, nil
-	}
-*/
 func (db *appdbimpl) CheckUserByUsername(u User) (User, error) {
 	var user User
 	if err := db.c.QueryRow(`SELECT id, username FROM users WHERE username = ?`, u.Username).Scan(&user.Id, &user.Username); err != nil {
@@ -170,7 +159,7 @@ func (db *appdbimpl) GetFollowStatus(user uint64, followed uint64) (bool, error)
 // Database function that return true, if one user have banned another user, false otherwise
 func (db *appdbimpl) GetBanStatus(user uint64, banned uint64) (bool, error) {
 	var ret bool
-	//query returns 1 if the user have banned another user
+	// query returns 1 if the user have banned another user
 	if err := db.c.QueryRow(`SELECT EXISTS(SELECT 1 FROM bans WHERE userId=? AND bannedId=?)`, user, banned).Scan(&ret); err != nil {
 		if err == sql.ErrNoRows {
 			return false, err

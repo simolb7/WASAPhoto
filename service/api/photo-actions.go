@@ -2,6 +2,7 @@ package api
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -33,7 +34,7 @@ func (rt *_router) uploadPhoto(w http.ResponseWriter, r *http.Request, ps httpro
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	//leggo la foto e inizio a creare la struct photo
+	// leggo la foto e inizio a creare la struct photo
 	photo.File, err = io.ReadAll(r.Body)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -68,7 +69,7 @@ func (rt *_router) deletePhoto(w http.ResponseWriter, r *http.Request, ps httpro
 	var user User
 	token := getToken(r.Header.Get("Authorization"))
 
-	//prendo l'id della foto
+	// prendo l'id della foto
 	photoid, err := strconv.ParseUint(ps.ByName("photoid"), 10, 64)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -86,14 +87,15 @@ func (rt *_router) deletePhoto(w http.ResponseWriter, r *http.Request, ps httpro
 	}
 	user.FromDatabase(dbuser)
 
-	//elimino la foto
+	// elimino la foto
 	err = rt.db.RemovePhoto(photoid)
-	if err == database.ErrPhotoDoesNotExist {
+
+	if errors.Is(err, database.ErrPhotoDoesNotExist) {
 		http.Error(w, err.Error(), http.StatusNotFound)
 		return
 	}
 	if err != nil {
-		//registro un messaggio di errore, aggiungo un campo "id" al log per indicare l'ID della foto
+		// registro un messaggio di errore, aggiungo un campo "id" al log per indicare l'ID della foto
 		http.Error(w, fmt.Sprintf("Errore durante l'eliminazione della foto con ID %d", photoid), http.StatusInternalServerError)
 		return
 	}
@@ -107,6 +109,7 @@ func (rt *_router) getUserPhotos(w http.ResponseWriter, r *http.Request, ps http
 
 	token := getToken(r.Header.Get("Authorization"))
 	requestUser.Id = token
+
 	dbrequestuser, err := rt.db.CheckUserById(requestUser.ToDatabase())
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)

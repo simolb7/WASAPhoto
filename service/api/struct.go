@@ -54,7 +54,7 @@ type Comment struct {
 	Content    string `json:"content"`
 }
 
-//Functions for talking with the db
+// Functions for talking from/to the db
 
 func (u *User) FromDatabase(user database.User) {
 	u.Id = user.Id
