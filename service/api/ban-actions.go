@@ -115,9 +115,9 @@ func (rt *_router) getBans(w http.ResponseWriter, r *http.Request, ps httprouter
 	token := getToken(r.Header.Get("Authorization"))
 
 	var requestData map[string]string
-	err1 := json.NewDecoder(r.Body).Decode(&requestData)
-	if err1 != nil {
-		http.Error(w, err1.Error(), http.StatusBadRequest)
+	err := json.NewDecoder(r.Body).Decode(&requestData)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 

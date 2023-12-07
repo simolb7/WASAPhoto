@@ -30,10 +30,7 @@ func (rt *_router) uploadPhoto(w http.ResponseWriter, r *http.Request, ps httpro
 		return
 	}
 	user.FromDatabase(dbuser)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
+
 	// leggo la foto e inizio a creare la struct photo
 	photo.File, err = io.ReadAll(r.Body)
 	if err != nil {
