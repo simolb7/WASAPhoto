@@ -14,7 +14,7 @@ func (db *appdbimpl) CreateUser(u User) (User, error) {
 		// L'utente esiste già, fai login
 		return user, err
 	}
-	if errors.Is(err, sql.ErrNoRows) {
+	if !errors.Is(err, sql.ErrNoRows) {
 		// Un errore diverso da ErrNoRows si è verificato durante la query
 		return user, ErrUserDoesNotExist
 	}
@@ -38,7 +38,7 @@ func (db *appdbimpl) SetUsername(u User, newusername string) (User, error) {
 		// Il nuovo username è già in uso da un altro utente
 		return u, ErrUsernameAlreadyExists
 	}
-	if errors.Is(err, sql.ErrNoRows) {
+	if !errors.Is(err, sql.ErrNoRows) {
 		// Un errore diverso si è verificato durante la query
 		return u, err
 	}

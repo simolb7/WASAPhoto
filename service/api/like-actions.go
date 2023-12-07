@@ -26,15 +26,8 @@ func (rt *_router) likePhoto(w http.ResponseWriter, r *http.Request, ps httprout
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	likeid, err := strconv.ParseUint(ps.ByName("likeid"), 10, 64)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
 	token := getToken(r.Header.Get("Authorization"))
 
-	like.LikeId = likeid
 	like.UserId = token
 	like.PhotoId = photoid
 	like.PhotoOwner = user.Id
