@@ -2,6 +2,7 @@ package database
 
 import (
 	"database/sql"
+	"errors"
 )
 
 // Database function that adds a new user in the database upon registration, or logs the user
@@ -12,7 +13,8 @@ func (db *appdbimpl) CreateUser(u User) (User, error) {
 	if err == nil {
 		// L'utente esiste già, fai login
 		return user, err
-	} else if err != sql.ErrNoRows {
+	}
+	if errors.Is(err, sql.ErrNoRows) {
 		// Un errore diverso da ErrNoRows si è verificato durante la query
 		return user, ErrUserDoesNotExist
 	}
@@ -35,7 +37,8 @@ func (db *appdbimpl) SetUsername(u User, newusername string) (User, error) {
 	if err == nil {
 		// Il nuovo username è già in uso da un altro utente
 		return u, ErrUsernameAlreadyExists
-	} else if err != sql.ErrNoRows {
+	}
+	if errors.Is(err, sql.ErrNoRows) {
 		// Un errore diverso si è verificato durante la query
 		return u, err
 	}
