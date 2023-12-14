@@ -1,6 +1,9 @@
 package database
 
-import "database/sql"
+import (
+	"database/sql"
+	"errors"
+)
 
 // Database function that adds a follow to another user
 func (db *appdbimpl) InsertFollow(f Follow) (Follow, error) {
@@ -40,7 +43,7 @@ func (db *appdbimpl) GetFollowersCount(id uint64) (int, error) {
 	var count int
 
 	if err := db.c.QueryRow("SELECT COUNT(*) FROM followers WHERE followerId = ?", id).Scan(&count); err != nil {
-		if err == sql.ErrNoRows {
+		if errors.Is(err, sql.ErrNoRows) {
 			return 0, nil
 		}
 		return count, err
@@ -53,7 +56,7 @@ func (db *appdbimpl) GetFollowedCount(id uint64) (int, error) {
 	var count int
 
 	if err := db.c.QueryRow("SELECT COUNT(*) FROM followers WHERE userId = ?", id).Scan(&count); err != nil {
-		if err == sql.ErrNoRows {
+		if errors.Is(err, sql.ErrNoRows) {
 			return 0, nil
 		}
 		return count, err
@@ -65,7 +68,7 @@ func (db *appdbimpl) GetFollowedCount(id uint64) (int, error) {
 func (db *appdbimpl) GetFollower(u User, token uint64) (Follow, error) {
 	var follow Follow
 	if err := db.c.QueryRow("SELECT Id, userId, followerId from followers WHERE followerId = ? AND userId = ?", u.Id, token).Scan(&follow.Id, &follow.UserId, &follow.UserFollowedID); err != nil {
-		if err == sql.ErrNoRows {
+		if errors.Is(err, sql.ErrNoRows) {
 			return follow, ErrFollowDoesNotExist
 		}
 	}

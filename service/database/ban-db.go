@@ -1,6 +1,9 @@
 package database
 
-import "database/sql"
+import (
+	"database/sql"
+	"errors"
+)
 
 // Database fuction that allows a user to ban another user
 func (db *appdbimpl) InsertBan(b Ban) (Ban, error) {
@@ -38,7 +41,7 @@ func (db *appdbimpl) RemoveBan(b Ban) error {
 func (db *appdbimpl) GetBan(u User, token uint64) (Ban, error) {
 	var ban Ban
 	if err := db.c.QueryRow(`SELECT * FROM bans WHERE bannedId = ? AND userId = ?`, u.Id, token).Scan(&ban.BanId, &ban.UserBannedId, &ban.UserId); err != nil {
-		if err == sql.ErrNoRows {
+		if errors.Is(err, sql.ErrNoRows) {
 			return ban, ErrBanDoesNotExist
 		}
 	}
@@ -48,7 +51,7 @@ func (db *appdbimpl) GetBan(u User, token uint64) (Ban, error) {
 // Database function that checks if a user is banned by another user
 func (db *appdbimpl) BannedUserCheck(target User, request User) (bool, error) {
 	_, err := db.GetBan(target, request.Id)
-	if err == ErrBanDoesNotExist {
+	if errors.Is(err, ErrBanDoesNotExist) {
 		// Se ErrBanDoesNotExist, l'utente non è stato bannato
 		return false, nil
 	} else if err != nil {

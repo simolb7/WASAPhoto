@@ -2,6 +2,7 @@ package database
 
 import (
 	"database/sql"
+	"errors"
 )
 
 // Database function that adds a comment of a user to a photo
@@ -53,7 +54,7 @@ func (db *appdbimpl) GetCommentsCount(photoid uint64) (int, error) {
 
 	err := db.c.QueryRow("SELECT COUNT(*) FROM comments WHERE photoId = ?", photoid).Scan(&count)
 	if err != nil {
-		if err == sql.ErrNoRows {
+		if errors.Is(err, sql.ErrNoRows) {
 			return 0, ErrCommentDoesNotExist
 		}
 		return count, err

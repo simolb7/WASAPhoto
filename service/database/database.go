@@ -24,17 +24,6 @@ type User struct {
 	Username string `json:"username"`
 }
 
-/*
-	type PhotoStream struct {
-		Id            uint64 `json:"id"`
-		UserID        uint64 `json:"userId"`
-		File          []byte `json:"file"`
-		Date          string `json:"date"`
-		LikeNumber    int    `json:"likeNumber"`
-		CommentNumber int    `json:"commentNumber"`
-	}
-*/
-
 type Stream struct {
 	Id     uint64  `json:"identifier"`
 	Photos []Photo `json:"Photo"`
@@ -98,7 +87,7 @@ type AppDatabase interface {
 	CheckUserByUsername(User) (User, error)
 	CheckUser(User) (User, error)
 	GetStream(u User) ([]Photo, error)
-	//GetUserById(id int) (User, error)
+	// GetUserById(id int) (User, error)
 
 	InsertPhoto(p Photo) (Photo, error)
 	RemovePhoto(id uint64) error

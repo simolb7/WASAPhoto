@@ -72,7 +72,8 @@ func (rt *_router) unlikePhoto(w http.ResponseWriter, r *http.Request, ps httpro
 	if errors.Is(err, database.ErrLikeDoesNotExist) {
 		http.Error(w, err.Error(), http.StatusNotFound)
 		return
-	} else if err != nil {
+	}
+	if err != nil {
 		ctx.Logger.WithError(err).WithField("id", likeid).Error("impossible delete this like")
 		w.WriteHeader(http.StatusInternalServerError)
 		return

@@ -1,6 +1,9 @@
 package database
 
-import "database/sql"
+import (
+	"database/sql"
+	"errors"
+)
 
 // Database function to upload a photo
 func (db *appdbimpl) InsertPhoto(p Photo) (Photo, error) {
@@ -9,7 +12,7 @@ func (db *appdbimpl) InsertPhoto(p Photo) (Photo, error) {
 		return p, err
 	}
 
-	//generate id
+	// generate id
 	lastInsertID, err := result.LastInsertId()
 	if err != nil {
 		return p, err
@@ -59,12 +62,12 @@ func (db *appdbimpl) GetPhotos(u User, token uint64) ([]Photo, error) {
 			return nil, err
 		}
 		if err := db.c.QueryRow(`SELECT COUNT(*) FROM likes WHERE photoId = ?`, b.PhotoId).Scan(&b.LikeNumber); err != nil {
-			if err == sql.ErrNoRows {
+			if errors.Is(err, sql.ErrNoRows) {
 				return nil, err
 			}
 		}
 		if err := db.c.QueryRow(`SELECT COUNT(*) FROM comments WHERE photoId = ?`, token, b.PhotoId).Scan(&b.CommentNumber); err != nil {
-			if err == sql.ErrNoRows {
+			if errors.Is(err, sql.ErrNoRows) {
 				return nil, err
 			}
 		}
@@ -79,7 +82,7 @@ func (db *appdbimpl) GetPhotos(u User, token uint64) ([]Photo, error) {
 func (db *appdbimpl) GetPhotosCount(id uint64) (int, error) {
 	var count int
 	if err := db.c.QueryRow("SELECT COUNT(*) FROM photos WHERE userId = ?", id).Scan(&count); err != nil {
-		if err == sql.ErrNoRows {
+		if errors.Is(err, sql.ErrNoRows) {
 			return count, ErrPhotoDoesNotExist
 		}
 	}
@@ -90,7 +93,7 @@ func (db *appdbimpl) GetPhotosCount(id uint64) (int, error) {
 func (db *appdbimpl) CheckPhoto(p Photo) (Photo, error) {
 	var photo Photo
 	if err := db.c.QueryRow(`SELECT Id, userId, photo, date FROM photos WHERE Id=?`, p.PhotoId).Scan(&photo.PhotoId, &photo.UserId, &photo.File, &photo.Date); err != nil {
-		if err == sql.ErrNoRows {
+		if errors.Is(err, sql.ErrNoRows) {
 			return photo, ErrPhotoDoesNotExist
 		}
 	}

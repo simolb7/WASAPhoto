@@ -52,7 +52,8 @@ func (db *appdbimpl) SetUsername(u User, newusername string) (User, error) {
 	affected, err := res.RowsAffected()
 	if err != nil {
 		return u, err
-	} else if affected == 0 {
+	}
+	if affected == 0 {
 		return u, ErrUserDoesNotExist
 	}
 
@@ -65,8 +66,8 @@ func (db *appdbimpl) GetUserId(username string) (User, error) {
 	var user User
 	err := db.c.QueryRow("SELECT id, username FROM users WHERE username = ?", username).Scan(&user.Id, &user.Username)
 	if err != nil {
-		if err == sql.ErrNoRows {
-			//specific error
+		if errors.Is(err, sql.ErrNoRows) {
+			// specific error
 			return user, ErrUserDoesNotExist
 		}
 
@@ -79,7 +80,7 @@ func (db *appdbimpl) GetUserId(username string) (User, error) {
 func (db *appdbimpl) CheckUserByUsername(u User) (User, error) {
 	var user User
 	if err := db.c.QueryRow(`SELECT id, username FROM users WHERE username = ?`, u.Username).Scan(&user.Id, &user.Username); err != nil {
-		if err == sql.ErrNoRows {
+		if errors.Is(err, sql.ErrNoRows) {
 			return user, ErrUserDoesNotExist
 		}
 	}
@@ -90,7 +91,7 @@ func (db *appdbimpl) CheckUserById(u User) (User, error) {
 	var user User
 	err := db.c.QueryRow(`SELECT id, username FROM users WHERE id = ?`, u.Id).Scan(&user.Id, &user.Username)
 	if err != nil {
-		if err == sql.ErrNoRows {
+		if errors.Is(err, sql.ErrNoRows) {
 			return user, ErrUserDoesNotExist
 		}
 	}
@@ -100,7 +101,7 @@ func (db *appdbimpl) CheckUserById(u User) (User, error) {
 func (db *appdbimpl) CheckUser(u User) (User, error) {
 	var user User
 	if err := db.c.QueryRow(`SELECT id, username FROM users WHERE id = ? AND username = ?`, u.Id, u.Username).Scan(&user.Id, &user.Username); err != nil {
-		if err == sql.ErrNoRows {
+		if errors.Is(err, sql.ErrNoRows) {
 			return user, ErrUserDoesNotExist
 		}
 	}
@@ -128,12 +129,12 @@ func (db *appdbimpl) GetStream(u User) ([]Photo, error) {
 			return nil, err
 		}
 		if err := db.c.QueryRow(`SELECT COUNT(*) FROM likes WHERE photoId = ?`, b.PhotoId).Scan(&b.LikeNumber); err != nil {
-			if err == sql.ErrNoRows {
+			if errors.Is(err, sql.ErrNoRows) {
 				return nil, err
 			}
 		}
 		if err := db.c.QueryRow(`SELECT COUNT(*) FROM comments WHERE photoId = ?`, b.PhotoId).Scan(&b.CommentNumber); err != nil {
-			if err == sql.ErrNoRows {
+			if errors.Is(err, sql.ErrNoRows) {
 				return nil, err
 			}
 		}
@@ -150,9 +151,9 @@ func (db *appdbimpl) GetStream(u User) ([]Photo, error) {
 // Database function that return true, if a user follows another user, false otherwise
 func (db *appdbimpl) GetFollowStatus(user uint64, followed uint64) (bool, error) {
 	var ret bool
-	//query returns 1 if the user follow another user
+	// query returns 1 if the user follow another user
 	if err := db.c.QueryRow(`SELECT EXISTS(SELECT 1 FROM followers WHERE userId= ? AND  followerId= ?)`, user, followed).Scan(&ret); err != nil {
-		if err == sql.ErrNoRows {
+		if errors.Is(err, sql.ErrNoRows) {
 			return false, err
 		}
 	}
@@ -164,7 +165,7 @@ func (db *appdbimpl) GetBanStatus(user uint64, banned uint64) (bool, error) {
 	var ret bool
 	// query returns 1 if the user have banned another user
 	if err := db.c.QueryRow(`SELECT EXISTS(SELECT 1 FROM bans WHERE userId=? AND bannedId=?)`, user, banned).Scan(&ret); err != nil {
-		if err == sql.ErrNoRows {
+		if errors.Is(err, sql.ErrNoRows) {
 			return false, err
 		}
 	}

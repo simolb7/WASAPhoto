@@ -1,6 +1,9 @@
 package database
 
-import "database/sql"
+import (
+	"database/sql"
+	"errors"
+)
 
 // Database function that adds a like of a user to a photo
 func (db *appdbimpl) InsertLike(l Like) (Like, error) {
@@ -51,7 +54,7 @@ func (db *appdbimpl) GetLikeCount(photoid uint64) (int, error) {
 
 	err := db.c.QueryRow("SELECT COUNT(*) FROM likes WHERE photoId = ?", photoid).Scan(&count)
 	if err != nil {
-		if err == sql.ErrNoRows {
+		if errors.Is(err, sql.ErrNoRows) {
 			return 0, nil
 		}
 		return 0, err
@@ -66,7 +69,7 @@ func (db *appdbimpl) GetLike(photoid uint64, token uint64) (Like, error) {
 
 	err := db.c.QueryRow(`SELECT Id, userId, photoId, photoOwner FROM likes WHERE userId = ? AND photoId = ?`, token, photoid).Scan(&like.LikeId, &like.UserId, &like.PhotoId, &like.PhotoOwner)
 	if err != nil {
-		if err == sql.ErrNoRows {
+		if errors.Is(err, sql.ErrNoRows) {
 			return like, ErrLikeDoesNotExist
 		}
 		return like, err
