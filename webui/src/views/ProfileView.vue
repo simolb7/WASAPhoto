@@ -368,19 +368,19 @@ export default {
             <div class="modal-content">
                 <!-- Contenuto della finestra di popup -->
                 <div class="modal-header">
-                    <h5 class="modal-title">Comments</h5>
+                    <h5 class="modal-title">All comments</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <ul v-if="photoComments && photoComments.comments && photoComments.comments.length > 0">
-                        <li v-for="comment in photoComments.comments" :key="comment.id" >
-                            <div  class="d-flex justify-content-between">
-                                <div>
+                    <ul v-if="photoComments && photoComments.comments && photoComments.comments.length > 0" style = "list-style-type: none;">
+                        <li v-for="comment in photoComments.comments" :key="comment.id" class="comment-item ">
+                            <div  class="d-flex justify-content-between align-items-center">
+                                <div class="comment-container"> 
                                     <strong>{{ comment.username }}</strong> 
-                                    <p>{{ comment.content }}</p>
+                                    <p class = "comment-content">{{ comment.content }}</p>
                                 </div>
-                                <div class = "ml-auto"  v-if="canDeleteComment(comment,)" >
-                                    <button class="btn btn-danger" @click="deleteComment(comment.id, comment.photoId, username, comment.userId)">Delete</button>
+                                <div class = "ml-auto"  v-if="canDeleteComment(comment)" >
+                                    <button class="btn btn-danger mr-2" @click="deleteComment(comment.id, comment.photoId, username, comment.userId)">Delete</button>
                                 </div>
                                 
                             </div>
@@ -405,5 +405,17 @@ export default {
         display: block;
         width: 100%;
         margin-top: 10px; /* Aggiungi margine in alto se necessario */
+    }
+    .comment-item {
+        margin-bottom: 10px; /* Aggiungi margine inferiore tra i commenti */
+    }
+    .comment-content {
+        overflow-wrap: break-word;
+        word-wrap: break-word;
+        word-break: break-word;
+    }
+    .comment-container {
+        /* Stile per il contenitore del commento */
+        margin-right: 8px; /* O qualsiasi valore desiderato */
     }
 </style>
