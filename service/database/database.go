@@ -64,10 +64,11 @@ type Like struct {
 }
 
 type Comment struct {
-	PhotoOwnerID uint64 `json:"photoOwnerID"`
 	PhotoId      uint64 `json:"photoId"`
 	CommentId    uint64 `json:"id"`
 	UserId       uint64 `json:"userId"`
+	PhotoOwnerID uint64 `json:"photoOwnerID"`
+	Username     string `json:"username"`
 	Content      string `json:"content"`
 }
 
@@ -165,6 +166,7 @@ func New(db *sql.DB) (AppDatabase, error) {
 			userId INTEGER NOT NULL,
 			photoId INTEGER NOT NULL,
 			photoOwnerID INTEGER NOT NULL,
+			Username TEXT NOT NULL,
 			content TEXT NOT NULL,
 			FOREIGN KEY (userId) REFERENCES users(Id),
 			FOREIGN KEY (photoId) REFERENCES photos(Id)

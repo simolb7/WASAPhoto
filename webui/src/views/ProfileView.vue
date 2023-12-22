@@ -229,8 +229,40 @@ export default {
                 }
             }
         },
+        async deleteComment(commentid, photoid, username) {
+			try {
+				let response = await this.$axios.delete("/user/" + username + "/photo/" + photoid + "/comment/" + commentid, {
+					headers: {
+						Authorization: "Bearer " + localStorage.getItem("token")
+					}
+				})
+				location.reload();
+			} catch(e) {
+				if (e.response && e.response.status === 400) {
+                    this.errormsg = "Form error, please check all fields and try again. If you think that this is an error, write an e-mail to us.";
+					this.detailedmsg = null;
+				} else if (e.response && e.response.status === 500) {
+					this.errormsg = "An internal error occurred. We will be notified. Please try again later.";
+					this.detailedmsg = e.toString();
+				} else {
+					this.errormsg = e.toString();
+					this.detailedmsg = null;
+				}
+			}
+		},
+        canDeleteComment(comment) {
+        // Supponiamo che tu abbia informazioni sull'utente autenticato e sulla proprietà della foto
+            //console.log('comment:', comment);
+            const isAuthenticatedUser = localStorage.getItem("username") === comment.username;
+            const isPhotoOwner = comment.photoOwner === localStorage.getItem("token")
+            console.log('id po:', comment.photoOwner);
+            console.log('isAuthenticatedUser:', isAuthenticatedUser);
+            console.log('isPhotoOwner:', isPhotoOwner);
+            // Ritorna true solo se l'utente è autenticato e ha il permesso di eliminare il commento
+            return isAuthenticatedUser && isPhotoOwner;
+        },
+	},
 
-    },
     mounted() {
         this.userProfile()
         this.userPhotos()
@@ -340,11 +372,15 @@ export default {
                 <div class="modal-body">
                     <ul v-if="photoComments && photoComments.comments && photoComments.comments.length > 0">
                         <li v-for="comment in photoComments.comments" :key="comment.id" >
-                            <div>
-                                <strong>{{ comment.username }}</strong> 
-                                <p>{{ comment.content }}</p>
-                                <button class="btn btn-danger" @click="deleteComment(comment.id)">Delete</button>
-                            
+                            <div  class="d-flex justify-content-between">
+                                <div>
+                                    <strong>{{ comment.username }}</strong> 
+                                    <p>{{ comment.content }}</p>
+                                </div>
+                                <div class = "ml-auto" >
+                                    <button class="btn btn-danger" @click="deleteComment(comment.id, comment.photoId, username)">Delete</button>
+                                </div>
+                                
                             </div>
                         </li>
                     </ul>
