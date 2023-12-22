@@ -46,7 +46,7 @@ func (rt *_router) commentPhoto(w http.ResponseWriter, r *http.Request, ps httpr
 
 	comment.UserId = token
 	comment.PhotoId = photoid
-	comment.PhotoOwner = user.Id
+	comment.PhotoOwnerID = user.Id
 
 	dbcomment, err := rt.db.InsertComment(comment.CommentToDatabase())
 	if err != nil {
@@ -88,7 +88,7 @@ func (rt *_router) uncommentPhoto(w http.ResponseWriter, r *http.Request, ps htt
 	comment.CommentId = commentid
 	comment.UserId = token
 	comment.PhotoId = photoid
-	comment.PhotoOwner = user.Id
+	comment.PhotoOwnerID = user.Id
 
 	err = rt.db.RemoveComment(comment.CommentToDatabase())
 
@@ -149,7 +149,7 @@ func (rt *_router) getComment(w http.ResponseWriter, r *http.Request, ps httprou
 
 	commentList.RequestId = requestUser.Id
 	commentList.PhotoId = photo.Id
-	commentList.PhotoOwner = user.Id
+	commentList.PhotoOwnerID = user.Id
 	commentList.Comments = comments
 
 	w.Header().Set("Content-Type", "application/json")

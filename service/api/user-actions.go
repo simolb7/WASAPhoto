@@ -34,22 +34,21 @@ func (rt *_router) doLogin(w http.ResponseWriter, r *http.Request, ps httprouter
 // this function provide to change user's username
 func (rt *_router) setMyUserName(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
 	var user User
-	username := ps.ByName("username")
-
-	if username == "" {
-		http.Error(w, "L'username non può essere vuoto", http.StatusBadRequest)
-		return
-	}
 
 	err := json.NewDecoder(r.Body).Decode(&user)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+	if user.Username == "" {
+		http.Error(w, "L'username non può essere vuoto", http.StatusBadRequest)
+		return
+	}
 	token := getToken(r.Header.Get("Authorization"))
 
 	user.Id = token
-	dbuser, err := rt.db.SetUsername(user.ToDatabase(), username)
+
+	dbuser, err := rt.db.SetUsername(user.ToDatabase(), user.Username)
 	if err != nil {
 		// gestisco gli errori specifici
 		if errors.Is(err, database.ErrUsernameAlreadyExists) {

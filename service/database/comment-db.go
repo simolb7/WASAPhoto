@@ -8,7 +8,7 @@ import (
 // Database function that adds a comment of a user to a photo
 func (db *appdbimpl) InsertComment(c Comment) (Comment, error) {
 
-	res, err := db.c.Exec("INSERT INTO comments (userId, photoid, photoOwner, content) VALUES (?,?,?,?)", c.UserId, c.PhotoId, c.PhotoOwner, c.Content)
+	res, err := db.c.Exec("INSERT INTO comments (userId, photoid, photoOwner, content) VALUES (?,?,?,?)", c.UserId, c.PhotoId, c.PhotoOwnerID, c.Content)
 	if err != nil {
 		return c, err
 	}
@@ -65,14 +65,14 @@ func (db *appdbimpl) GetCommentsCount(photoid uint64) (int, error) {
 // return all comments from a photo
 func (db *appdbimpl) GetComments(photoid uint64, userid uint64) ([]Comment, error) {
 	var comments []Comment
-	rows, err := db.c.Query(`SELECT Id, userId, photoId, photoOwner, content FROM comments WHERE photoId = ? AND userId = ?`, photoid, userid)
+	rows, err := db.c.Query(`SELECT Id, userId, photoId, photoOwnerID, content FROM comments WHERE photoId = ? AND userId = ?`, photoid, userid)
 	if err != nil {
 		return comments, ErrPhotoDoesNotExist
 	}
 	defer func() { _ = rows.Close() }()
 	for rows.Next() {
 		var comment Comment
-		err = rows.Scan(&comment.CommentId, &comment.UserId, &comment.PhotoId, &comment.PhotoOwner, &comment.Content)
+		err = rows.Scan(&comment.CommentId, &comment.UserId, &comment.PhotoId, &comment.PhotoOwnerID, &comment.Content)
 		if err != nil {
 			return nil, ErrCommentDoesNotExist
 		}

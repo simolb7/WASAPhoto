@@ -47,11 +47,11 @@ type Like struct {
 }
 
 type Comment struct {
-	CommentId  uint64 `json:"id"`
-	UserId     uint64 `json:"userId"`
-	PhotoId    uint64 `json:"photoId"`
-	PhotoOwner uint64 `json:"photoOwner"`
-	Content    string `json:"content"`
+	CommentId    uint64 `json:"id"`
+	UserId       uint64 `json:"userId"`
+	PhotoId      uint64 `json:"photoId"`
+	PhotoOwnerID uint64 `json:"photoOwnerID"`
+	Content      string `json:"content"`
 }
 
 // Functions for talking from/to the db
@@ -142,10 +142,10 @@ func (c *Comment) CommentFromDatabase(comment database.Comment) {
 
 func (c *Comment) CommentToDatabase() database.Comment {
 	return database.Comment{
-		CommentId:  c.CommentId,
-		UserId:     c.UserId,
-		PhotoId:    c.PhotoId,
-		PhotoOwner: c.PhotoOwner,
-		Content:    c.Content,
+		CommentId:    c.CommentId,
+		UserId:       c.UserId,
+		PhotoId:      c.PhotoId,
+		PhotoOwnerID: c.PhotoOwnerID,
+		Content:      c.Content,
 	}
 }

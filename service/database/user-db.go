@@ -33,7 +33,7 @@ func (db *appdbimpl) CreateUser(u User) (User, error) {
 // Database function that allow the user to change username
 func (db *appdbimpl) SetUsername(u User, newusername string) (User, error) {
 	var conflictingUser User
-	err := db.c.QueryRow("SELECT id, Username FROM users WHERE username = ? AND id <> ?", newusername, u.Id).Scan(&conflictingUser.Id, &conflictingUser.Username)
+	err := db.c.QueryRow("SELECT Id, Username FROM users WHERE Username = ? AND Id <> ?", newusername, u.Id).Scan(&conflictingUser.Id, &conflictingUser.Username)
 	if err == nil {
 		// Il nuovo username è già in uso da un altro utente
 		return u, ErrUsernameAlreadyExists
@@ -43,7 +43,7 @@ func (db *appdbimpl) SetUsername(u User, newusername string) (User, error) {
 		return u, err
 	}
 	// if it is all correct, change username
-	res, err := db.c.Exec("UPDATE users SET Username=? WHERE id=? AND Username=?", u.Username, u.Id, newusername)
+	res, err := db.c.Exec("UPDATE users SET Username=? WHERE Id=?", newusername, u.Id)
 
 	if err != nil {
 		return u, err

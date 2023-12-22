@@ -64,18 +64,18 @@ type Like struct {
 }
 
 type Comment struct {
-	PhotoOwner uint64 `json:"photoOwner"`
-	PhotoId    uint64 `json:"photoId"`
-	CommentId  uint64 `json:"id"`
-	UserId     uint64 `json:"userId"`
-	Content    string `json:"content"`
+	PhotoOwnerID uint64 `json:"photoOwnerID"`
+	PhotoId      uint64 `json:"photoId"`
+	CommentId    uint64 `json:"id"`
+	UserId       uint64 `json:"userId"`
+	Content      string `json:"content"`
 }
 
 type Comments struct {
-	RequestId  uint64    `json:"requestId"`
-	PhotoId    uint64    `json:"photoId"`
-	PhotoOwner uint64    `json:"identifier"`
-	Comments   []Comment `json:"comments"`
+	RequestId    uint64    `json:"requestId"`
+	PhotoId      uint64    `json:"photoId"`
+	PhotoOwnerID uint64    `json:"identifier"`
+	Comments     []Comment `json:"comments"`
 }
 
 // AppDatabase is the high level interface for the DB
@@ -164,7 +164,7 @@ func New(db *sql.DB) (AppDatabase, error) {
 			Id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
 			userId INTEGER NOT NULL,
 			photoId INTEGER NOT NULL,
-			photoOwner INTEGER NOT NULL,
+			photoOwnerID INTEGER NOT NULL,
 			content TEXT NOT NULL,
 			FOREIGN KEY (userId) REFERENCES users(Id),
 			FOREIGN KEY (photoId) REFERENCES photos(Id)

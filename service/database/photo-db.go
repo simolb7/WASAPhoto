@@ -19,6 +19,7 @@ func (db *appdbimpl) InsertPhoto(p Photo) (Photo, error) {
 	}
 
 	p.PhotoId = uint64(lastInsertID)
+	println(p.PhotoId)
 	return p, nil
 
 }
