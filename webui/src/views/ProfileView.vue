@@ -45,7 +45,7 @@ export default {
                         id: 0,
                         userId: 0,
                         photoId: 0,
-                        photoOwner: 0,
+                        photoOwnerID: 0,
                         //ownerUsername: "",
                         username: "",
                         content: "",
@@ -180,12 +180,12 @@ export default {
             const formattedDateTime = new Date(dateTime).toLocaleString('en-US', options);
             return formattedDateTime;
         },
-        async sendComment(username, photoid, comment) {
+        async sendComment(username, photoid, comment, ownerid) {
             if (comment === "") {
                 this.errormsg = "Emtpy comment field."
             } else {
                 try {
-                    let response = await this.$axios.post("/user/" + username + "/photo/" + photoid + "/comment", { content: comment }, {
+                    let response = await this.$axios.post("/user/" + username + "/photo/" + photoid + "/comment", { content: comment, photoOwnerID: ownerid }, {
                         headers: {
                             Authorization: "Bearer " + localStorage.getItem("token")
                         }
@@ -229,11 +229,11 @@ export default {
                 }
             }
         },
-        async deleteComment(commentid, photoid, username) {
+        async deleteComment(commentid, photoid, username, useridcommento) {
 			try {
 				let response = await this.$axios.delete("/user/" + username + "/photo/" + photoid + "/comment/" + commentid, {
 					headers: {
-						Authorization: "Bearer " + localStorage.getItem("token")
+						Authorization: "Bearer " + useridcommento
 					}
 				})
 				location.reload();
@@ -254,12 +254,14 @@ export default {
         // Supponiamo che tu abbia informazioni sull'utente autenticato e sulla proprietà della foto
             //console.log('comment:', comment);
             const isAuthenticatedUser = localStorage.getItem("username") === comment.username;
-            const isPhotoOwner = comment.photoOwner === localStorage.getItem("token")
-            console.log('id po:', comment.photoOwner);
+            const isPhotoOwner = comment.photoOwnerID === parseInt(localStorage.getItem("token"));
+            /*console.log('comment ID:', comment.id);
+            console.log('id user auth:', localStorage.getItem("token"));
+            console.log('id owner:', comment.photoOwnerID);
             console.log('isAuthenticatedUser:', isAuthenticatedUser);
             console.log('isPhotoOwner:', isPhotoOwner);
-            // Ritorna true solo se l'utente è autenticato e ha il permesso di eliminare il commento
-            return isAuthenticatedUser && isPhotoOwner;
+            */// Ritorna true solo se l'utente è autenticato e ha il permesso di eliminare il commento
+            return isAuthenticatedUser || isPhotoOwner;
         },
 	},
 
@@ -338,7 +340,7 @@ export default {
                           aria-describedby="basic-addon2">
                         <div class="input-group-append">
                             <button class="btn btn-primary" type="button"
-                                @click="sendComment(username, photo.id, photo.comment)">Send</button>
+                                @click="sendComment(username, photo.id, photo.comment, photo.userId)">Send</button>
                         </div>
                     </div>
 
@@ -377,8 +379,8 @@ export default {
                                     <strong>{{ comment.username }}</strong> 
                                     <p>{{ comment.content }}</p>
                                 </div>
-                                <div class = "ml-auto" >
-                                    <button class="btn btn-danger" @click="deleteComment(comment.id, comment.photoId, username)">Delete</button>
+                                <div class = "ml-auto"  v-if="canDeleteComment(comment,)" >
+                                    <button class="btn btn-danger" @click="deleteComment(comment.id, comment.photoId, username, comment.userId)">Delete</button>
                                 </div>
                                 
                             </div>

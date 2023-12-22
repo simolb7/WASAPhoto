@@ -63,9 +63,9 @@ func (db *appdbimpl) GetCommentsCount(photoid uint64) (int, error) {
 }
 
 // return all comments from a photo
-func (db *appdbimpl) GetComments(photoid uint64, userid uint64) ([]Comment, error) {
+func (db *appdbimpl) GetComments(photoid uint64) ([]Comment, error) {
 	var comments []Comment
-	rows, err := db.c.Query(`SELECT Id, userId, photoId, photoOwnerID, Username, content FROM comments WHERE photoId = ? AND userId = ?`, photoid, userid)
+	rows, err := db.c.Query(`SELECT Id, userId, photoId, photoOwnerID, Username, content FROM comments WHERE photoId = ?`, photoid)
 	if err != nil {
 		return comments, ErrPhotoDoesNotExist
 	}
