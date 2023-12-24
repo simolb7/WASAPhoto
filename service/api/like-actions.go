@@ -118,10 +118,19 @@ func (rt *_router) getLike(w http.ResponseWriter, r *http.Request, ps httprouter
 	}
 	photo.PhotoFromDatabase(dbphoto)
 	like, err := rt.db.GetLike(photo.Id, token)
+
+	if errors.Is(err, database.ErrLikeDoesNotExist) {
+		// Il like non esiste, restituisci null
+		w.Write([]byte("null"))
+		return
+	}
+
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+
+	// Se il like esiste, restituisci le informazioni del like come JSON
 	w.Header().Set("Content-Type", "application/json")
 	_ = json.NewEncoder(w).Encode(like)
 }

@@ -33,6 +33,9 @@ export default {
                         LikeNumber: 0,
                         CommentNumber: 0,
                         comment: "",
+                        isUnLikeButton: false,
+                        likeId: 0,
+                        
                     }
                 ],
             },
@@ -106,7 +109,20 @@ export default {
                 this.photoList = response.data
                 this.photoList.photos.sort((a, b) => b.id - a.id);
                 for (let i = 0; i < this.photoList.photos.length; i++) {
-                    this.photoList.photos[i].file = 'data:image/jpg;base64,' + this.photoList.photos[i].file
+                    this.photoList.photos[i].file = 'data:image/jpg;base64,' + this.photoList.photos[i].file;
+                    let likestatus = await this.getLikeStatus(this.username, this.photoList.photos[i].id);
+                    console.log("likestaus "+ likestatus.hasLike)
+                    console.log("likeid "+ likestatus.likeId)
+
+
+                    if (likestatus.hasLike) {
+                        // Se esiste già un like, disabilita il pulsante "Like" e abilita il pulsante "Unlike"
+                        this.photoList.photos[i].isUnlikeButton = true;
+                        this.photoList.photos[i].likeId = likestatus.likeid;
+
+                    } else {
+                        this.photoList.photos[i].isUnlikeButton = false;     
+                    }
                 }
             } catch (e) {
                 if (e.response && e.response.status === 400) {
@@ -263,6 +279,77 @@ export default {
             */// Ritorna true solo se l'utente è autenticato e ha il permesso di eliminare il commento
             return isAuthenticatedUser || isPhotoOwner;
         },
+        async getLikeStatus(username, photoid) {
+            try {
+                let response = await this.$axios.get("/user/" + username + "/photo/" + photoid + "/like", {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem("token")}`
+                }
+                });
+                console.log("dati: "+ response.data);
+                if (response.data !== null) {
+                    return {
+                        hasLike: true,
+                        likeid: response.data.likeId
+                    };
+                } else {
+                    return {
+                        hasLike: false,
+                        likeid: 0
+                    };
+        }
+            } catch (error) {
+                if (error.response && error.response.status === 404) {
+                    this.errormsg = "Form error, please check all fields and try again. If you think that this is an error, write an e-mail to us.";
+					this.detailedmsg = null;
+                } 
+            }
+            console.error("Errore durante il recupero dello stato del like:", error);
+        },
+        async likePhoto(username, photoid) {
+            try {
+                let response = await this.$axios.post("/user/" + username + "/photo/" + photoid + "/like", {}, {
+                    headers: {
+                        Authorization: "Bearer " + localStorage.getItem("token")
+                    }
+                })
+                this.clear = response.data
+                this.refresh()
+            } catch (e) {
+                if (e.response && e.response.status === 400) {
+                    this.errormsg = "Form error, please check all fields and try again. If you think that this is an error, write an e-mail to us.";
+                    this.detailedmsg = null;
+                } else if (e.response && e.response.status === 500) {
+                    this.errormsg = "An internal error occurred. We will be notified. Please try again later.";
+                    this.detailedmsg = e.toString();
+                } else {
+                    this.errormsg = e.toString();
+                    this.detailedmsg = null;
+                }
+            }
+        },
+        async unlikePhoto(username, photoid, likeid) {
+            try {
+                    let response = await this.$axios.delete("/user/" + username + "/photo/" + photoid + "/like/" + likeid, {
+                        headers: {
+                            Authorization: "Bearer " + localStorage.getItem("token")
+                        }
+                    })
+                    this.clear = response.data
+                    this.refresh()
+                } catch (e) {
+                    if (e.response && e.response.status === 400) {
+                        this.errormsg = "Form error, please check all fields and try again. If you think that this is an error, write an e-mail to us.";
+                        this.detailedmsg = null;
+                    } else if (e.response && e.response.status === 500) {
+                        this.errormsg = "An internal error occurred. We will be notified. Please try again later.";
+                        this.detailedmsg = e.toString();
+                    } else {
+                        this.errormsg = e.toString();
+                        this.detailedmsg = null;
+                    }
+                }
+        },
 	},
 
     mounted() {
@@ -347,10 +434,12 @@ export default {
                     <div class="d-flex justify-content-between align-items-center">
                         <div class="btn-group">
                             <!--<button type="button" class="btn btn-dark" @click="openLog(username, photo.id)">Comments</button>--> 
-                            <button type="button" class="btn btn-primary" @click="likePhoto(username, photo.id)">Like</button>
-                            <button type="button" v-if="photo.likeStatus == true" class="btn btn-danger"
-                                @click="deleteLike(username, photo.id)">Unlike</button>
-                            
+                            <button v-if="photo.isUnlikeButton" type="button" class="btn btn-danger" @click="unlikePhoto(profile.username, photo.id, photo.likeId)">
+                                Unlike
+                                </button>
+                            <button v-if="!photo.isUnlikeButton" type="button" class="btn btn-primary" @click="likePhoto(profile.username, photo.id)">
+                                Like
+                            </button>
                             <button type="button" class="btn btn-success" @click="getComments(username, photo.id)">View all comments</button>
                         </div>
 
