@@ -60,21 +60,13 @@ export default {
     methods: {
 
         async refresh() {
-            
-			this.loading = true;
-			this.errormsg = null;
-			try {
-				let response = this.$router.go({ path: '/user/' + this.username + '/profile' })
-				this.guesses = response.data;
-			} catch (e) {
-				this.errormsg = e.toString();
-			}
-			this.loading = false;
             await this.userProfile();
+            await this.userPhotos();
+            
         },
         async userProfile() {
             try {
-                let response = await this.$axios.get("/user/" + this.username + "/profile", {
+                let response = await this.$axios.get("/user/" + this.$route.params.username + "/profile", {
                     headers: {
                         Authorization: "Bearer " + localStorage.getItem("token")
                     }
@@ -94,14 +86,9 @@ export default {
                 }
             }
         },
-        async doLogout() {
-			localStorage.removeItem("token")
-			localStorage.removeItem("username")
-			this.$router.push({ path: '/' })
-		},
         async userPhotos() {
             try {
-                let response = await this.$axios.get("/user/" + this.username + "/photo", {
+                let response = await this.$axios.get("/user/" + this.$route.params.username + "/photo", {
                     headers: {
                         Authorization: "Bearer " + localStorage.getItem("token")
                     }
@@ -111,9 +98,8 @@ export default {
                 for (let i = 0; i < this.photoList.photos.length; i++) {
                     this.photoList.photos[i].file = 'data:image/jpg;base64,' + this.photoList.photos[i].file;
                     let likestatus = await this.getLikeStatus(this.username, this.photoList.photos[i].id);
-
-                    console.log("comment "+  this.photoList.photos[i].commentNumber);
-                    console.log("like "+  this.photoList.photos[i].likeNumber);
+                    console.log("likestaus "+ likestatus.hasLike)
+                    console.log("likeid "+ likestatus.likeId)
 
 
                     if (likestatus.hasLike) {
@@ -138,59 +124,6 @@ export default {
                 }
             }
         },
-        async changeName() {
-            if (this.newUsername == "") {
-                this.errormsg = "Emtpy username field."
-            } else {
-                try {
-                    let response = await this.$axios.put("/user/" + this.username , { username: this.newUsername }, {
-                        headers: {
-                            Authorization: "Bearer " + localStorage.getItem("token")
-                        }
-                    })
-                    this.user = response.data
-                    localStorage.setItem("username", this.user.username);
-                    this.profile.username = this.user.username;
-                    this.username = this.user.username;
-                    this.newUsername = "";
-                    this.$router.push({ path: '/user/' + this.user.username + '/profile' })
-                    this.refresh()
-                } catch (e) {
-                    if (e.response && e.response.status === 400) {
-                        this.errormsg = "Form error, please check all fields and try again. If you think that this is an error, write an e-mail to us.";
-                        this.detailedmsg = null;
-                    } else if (e.response && e.response.status === 500) {
-                        this.errormsg = "An internal error occurred. We will be notified. Please try again later.";
-                        this.detailedmsg = e.toString();
-                    } else {
-                        this.errormsg = e.toString();
-                        this.detailedmsg = null;
-                    }
-                }
-            }
-
-        },
-        async deletePhoto(photoid) {
-            try {
-                let response = await this.$axios.delete("/user/" + this.username + "/photo/" + photoid, {
-                    headers: {
-                        Authorization: "Bearer " + localStorage.getItem("token")
-                    }
-                })
-                this.refresh();
-            } catch (e) {
-                if (e.response && e.response.status === 400) {
-                    this.errormsg = "Form error, please check all fields and try again. If you think that this is an error, write an e-mail to us.";
-                    this.detailedmsg = null;
-                } else if (e.response && e.response.status === 500) {
-                    this.errormsg = "An internal error occurred. We will be notified. Please try again later.";
-                    this.detailedmsg = e.toString();
-                } else {
-                    this.errormsg = e.toString();
-                    this.detailedmsg = null;
-                }
-            }
-        },
         formatDateTime(dateTime) {
             //timeZoneName: 'short' 
             const options = { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit'};
@@ -209,7 +142,6 @@ export default {
                     })
                     this.clear = response.data
                     this.refresh()
-                    
                 } catch (e) {
                     if (e.response && e.response.status === 400) {
                         this.errormsg = "Form error, please check all fields and try again. If you think that this is an error, write an e-mail to us.";
@@ -288,6 +220,7 @@ export default {
                     Authorization: `Bearer ${localStorage.getItem("token")}`
                 }
                 });
+                console.log("dati: "+ response.data);
                 if (response.data !== null) {
                     return {
                         hasLike: true,
@@ -416,10 +349,10 @@ export default {
                         class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                     </div>
                     <div class="d-flex justify-content-between align-items-center">
-                        <p class="card-text">Likes : {{ photo.likeNumber }}</p>
+                        <p class="card-text">Likes : {{ photo.likesCount }}</p>
                     </div>
                     <div class="d-flex justify-content-between align-items-center">
-                        <p class="card-text">Comments : {{ photo.commentNumber }}</p>
+                        <p class="card-text">Comments : {{ photo.commentsCount }}</p>
                     </div>
                     <p class="card-text">Photo uploaded on {{ formatDateTime(photo.date) }}</p>
 

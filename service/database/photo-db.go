@@ -67,7 +67,7 @@ func (db *appdbimpl) GetPhotos(u User, token uint64) ([]Photo, error) {
 				return nil, err
 			}
 		}
-		if err := db.c.QueryRow(`SELECT COUNT(*) FROM comments WHERE photoId = ?`, token, b.PhotoId).Scan(&b.CommentNumber); err != nil {
+		if err := db.c.QueryRow(`SELECT COUNT(*) FROM comments WHERE photoId = ?`, b.PhotoId).Scan(&b.CommentNumber); err != nil {
 			if errors.Is(err, sql.ErrNoRows) {
 				return nil, err
 			}
