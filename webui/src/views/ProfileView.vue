@@ -110,12 +110,7 @@ export default {
                 this.photoList.photos.sort((a, b) => b.id - a.id);
                 for (let i = 0; i < this.photoList.photos.length; i++) {
                     this.photoList.photos[i].file = 'data:image/jpg;base64,' + this.photoList.photos[i].file;
-                    let likestatus = await this.getLikeStatus(this.username, this.photoList.photos[i].id);
-
-                    console.log("comment "+  this.photoList.photos[i].commentNumber);
-                    console.log("like "+  this.photoList.photos[i].likeNumber);
-
-
+                    let likestatus = await this.getLikeStatus(this.username, this.photoList.photos[i].id); 
                     if (likestatus.hasLike) {
                         // Se esiste già un like, disabilita il pulsante "Like" e abilita il pulsante "Unlike"
                         this.photoList.photos[i].isUnlikeButton = true;

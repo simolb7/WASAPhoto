@@ -17,12 +17,14 @@ export default {
 	},
 	methods: {
 		async SearchUser() {
+			
 			if (this.searchByUsername === this.username) {
 				this.errormsg = "You can't search yourself."
 			} else if (this.searchByUsername === "") {
 				this.errormsg = "Emtpy username field."
 			} else {
 				try {
+					
 					let response = await this.$axios.get("user/" + this.searchByUsername + "/profile", {
 						headers: {
 							Authorization: "Bearer " + localStorage.getItem("token")
@@ -61,13 +63,14 @@ export default {
 						WASAPhoto
 					</a>
    				</Router-link>
-				<form class="d-flex mx-auto">
-					<input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-					<button class="btn btn-light" type="submit">Search</button>
+				<form class="d-flex mx-auto"  @submit.prevent="SearchUser">
+					<input type="text" id="searchUserUsername" v-model="searchByUsername" class="form-control me-2" placeholder="Search" aria-label="Search">
+					<button class="btn btn-light" type="submit"> Search </button>
 				</form>
         	</div>
 		</header>
 
+		
 		<div class="container-fluid">
 			<div class="row">
 				<main class="col-md-9 ms-sm-auto col-lg-12 px-md-4">
@@ -75,6 +78,7 @@ export default {
 				</main>
 			</div>
 		</div>
+		<ErrorMsg v-if="errormsg" :msg="errormsg"></ErrorMsg>
 
 	</div>
 

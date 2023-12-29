@@ -6,7 +6,7 @@ export default {
     data: function () {
         return {
             errormsg: null,
-            username: localStorage.getItem('username'),
+            //username: localStorage.getItem('username'),
             token: localStorage.getItem('token'),
             newUsername: "",
             profile: {
@@ -95,13 +95,12 @@ export default {
                 })
                 this.photoList = response.data
                 this.photoList.photos.sort((a, b) => b.id - a.id);
+                
                 for (let i = 0; i < this.photoList.photos.length; i++) {
                     this.photoList.photos[i].file = 'data:image/jpg;base64,' + this.photoList.photos[i].file;
-                    let likestatus = await this.getLikeStatus(this.username, this.photoList.photos[i].id);
-                    console.log("likestaus "+ likestatus.hasLike)
-                    console.log("likeid "+ likestatus.likeId)
-
-
+                
+                    let likestatus = await this.getLikeStatus(localStorage.getItem('username'), this.photoList.photos[i].id);
+                   
                     if (likestatus.hasLike) {
                         // Se esiste già un like, disabilita il pulsante "Like" e abilita il pulsante "Unlike"
                         this.photoList.photos[i].isUnlikeButton = true;
@@ -119,8 +118,12 @@ export default {
                     this.errormsg = "An internal error occurred. We will be notified. Please try again later.";
                     this.detailedmsg = e.toString();
                 } else {
-                    this.errormsg = "You haven't posted any photos yet. Go to the home and upload one!";
-                    this.detailedmsg = null;
+                    if (this.photoList && this.photoList.photos && this.photoList.photos.length > 0) {
+                        // Ci sono foto, non dovresti vedere il messaggio di errore
+                    } else {
+                        this.errormsg = this.$route.params.username + " hasn't posted any photos yet. Go to the home and upload one!";
+                        this.detailedmsg = null;
+                    }
                 }
             }
         },
@@ -130,12 +133,12 @@ export default {
             const formattedDateTime = new Date(dateTime).toLocaleString('en-US', options);
             return formattedDateTime;
         },
-        async sendComment(username, photoid, comment, ownerid) {
+        async sendComment(photoid, comment, ownerid) {
             if (comment === "") {
                 this.errormsg = "Emtpy comment field."
             } else {
                 try {
-                    let response = await this.$axios.post("/user/" + username + "/photo/" + photoid + "/comment", { content: comment, photoOwnerID: ownerid }, {
+                    let response = await this.$axios.post("/user/" + localStorage.getItem('username') + "/photo/" + photoid + "/comment", { content: comment, photoOwnerID: ownerid }, {
                         headers: {
                             Authorization: "Bearer " + localStorage.getItem("token")
                         }
@@ -156,9 +159,9 @@ export default {
                 }
             }
         },
-        async getComments(username, photoid) {
+        async getComments(photoid) {
             try {
-                let response = await this.$axios.get("/user/" + username + "/photo/" + photoid + "/comment", {
+                let response = await this.$axios.get("/user/" + this.$route.params.username  + "/photo/" + photoid + "/comment", {
                     headers: {
                         Authorization: "Bearer " + localStorage.getItem("token")
                     }
@@ -179,9 +182,9 @@ export default {
                 }
             }
         },
-        async deleteComment(commentid, photoid, username, useridcommento) {
+        async deleteComment(commentid, photoid, useridcommento) {
 			try {
-				let response = await this.$axios.delete("/user/" + username + "/photo/" + photoid + "/comment/" + commentid, {
+				let response = await this.$axios.delete("/user/" + localStorage.getItem('username') + "/photo/" + photoid + "/comment/" + commentid, {
 					headers: {
 						Authorization: "Bearer " + useridcommento
 					}
@@ -220,7 +223,6 @@ export default {
                     Authorization: `Bearer ${localStorage.getItem("token")}`
                 }
                 });
-                console.log("dati: "+ response.data);
                 if (response.data !== null) {
                     return {
                         hasLike: true,
@@ -240,9 +242,9 @@ export default {
             }
             console.error("Errore durante il recupero dello stato del like:", error);
         },
-        async likePhoto(username, photoid) {
+        async likePhoto(photoid) {
             try {
-                let response = await this.$axios.post("/user/" + username + "/photo/" + photoid + "/like", {}, {
+                let response = await this.$axios.post("/user/" + localStorage.getItem('username') + "/photo/" + photoid + "/like", {}, {
                     headers: {
                         Authorization: "Bearer " + localStorage.getItem("token")
                     }
@@ -262,9 +264,9 @@ export default {
                 }
             }
         },
-        async unlikePhoto(username, photoid, likeid) {
+        async unlikePhoto(photoid, likeid) {
             try {
-                    let response = await this.$axios.delete("/user/" + username + "/photo/" + photoid + "/like/" + likeid, {
+                    let response = await this.$axios.delete("/user/" + localStorage.getItem('username') + "/photo/" + photoid + "/like/" + likeid, {
                         headers: {
                             Authorization: "Bearer " + localStorage.getItem("token")
                         }
@@ -295,7 +297,7 @@ export default {
 
 <template>
     <div
-        class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-5 border-bottom">
         <h1 class="h2">Profile of <b>{{ profile.username }}</b>  </h1>
         <div class="p-4 text-black">
             <div class="d-flex justify-content-end text-center py-1">
@@ -312,7 +314,7 @@ export default {
                     <p class="small text-muted mb-0">Photos</p>
                 </div>
                 <div>
-                    <button class="btn btn-danger" type="button" @click="doLogout">Logout</button>
+                    <button class="btn btn-primary" type="button" @click="doLogout">Follow</button>
                 </div>
             </div>
         </div>
@@ -321,20 +323,8 @@ export default {
    
     <ErrorMsg v-if="errormsg" :msg="errormsg"></ErrorMsg>
 
-    <div class="input-group mb-3">
-        <input type="text" id="newUsername" v-model="newUsername" class="form-control"
-            placeholder="Insert a new username for your profile" aria-label="Recipient's username"
-            aria-describedby="basic-addon2">
-        <div class="input-group-append">
-            <button class="btn btn-success" type="button" @click="changeName">Change username</button>
-        </div>
-    </div>
 
-    <div
-        class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-    </div>
 
-   <!--. <LogModal id="logviewer" :log="photoComments" :token="token"></LogModal>..-->
 
     <div class="row" v-if="photoList && photoList.photos && photoList.photos.length > 0">
         <div class="col-md-4" v-for="photo in photoList.photos" :key="photo.id">
@@ -349,10 +339,10 @@ export default {
                         class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                     </div>
                     <div class="d-flex justify-content-between align-items-center">
-                        <p class="card-text">Likes : {{ photo.likesCount }}</p>
+                        <p class="card-text">Likes : {{ photo.likeNumber }}</p>
                     </div>
                     <div class="d-flex justify-content-between align-items-center">
-                        <p class="card-text">Comments : {{ photo.commentsCount }}</p>
+                        <p class="card-text">Comments : {{ photo.commentNumber }}</p>
                     </div>
                     <p class="card-text">Photo uploaded on {{ formatDateTime(photo.date) }}</p>
 
@@ -361,25 +351,23 @@ export default {
                           aria-describedby="basic-addon2">
                         <div class="input-group-append">
                             <button class="btn btn-primary" type="button"
-                                @click="sendComment(username, photo.id, photo.comment, photo.userId)">Send</button>
+                                @click="sendComment(photo.id, photo.comment, photo.userId)">Send</button>
                         </div>
                     </div>
 
                     <div class="d-flex justify-content-between align-items-center">
                         <div class="btn-group">
                             <!--<button type="button" class="btn btn-dark" @click="openLog(username, photo.id)">Comments</button>--> 
-                            <button v-if="photo.isUnlikeButton" type="button" class="btn btn-danger" @click="unlikePhoto(profile.username, photo.id, photo.likeId)">
+                            <button v-if="photo.isUnlikeButton" type="button" class="btn btn-danger" @click="unlikePhoto(photo.id, photo.likeId)">
                                 Unlike
                                 </button>
-                            <button v-if="!photo.isUnlikeButton" type="button" class="btn btn-primary" @click="likePhoto(profile.username, photo.id)">
+                            <button v-if="!photo.isUnlikeButton" type="button" class="btn btn-primary" @click="likePhoto( photo.id)">
                                 Like
                             </button>
-                            <button type="button" class="btn btn-success" @click="getComments(username, photo.id)">View all comments</button>
+                            
                         </div>
-
-                            <button type="button" class="btn btn-danger ml-auto"
-                                @click="deletePhoto(photo.id)">Delete Photo</button>
-                        
+                        <button type="button" class="btn btn-success" @click="getComments(photo.id)">View all comments</button>
+         
                     </div>
                 </div>
             </div>
@@ -403,7 +391,7 @@ export default {
                                     <p class = "comment-content">{{ comment.content }}</p>
                                 </div>
                                 <div class = "ml-auto"  v-if="canDeleteComment(comment)" >
-                                    <button class="btn btn-danger mr-2" @click="deleteComment(comment.id, comment.photoId, username, comment.userId)">Delete</button>
+                                    <button class="btn btn-danger mr-2" @click="deleteComment(comment.id, comment.photoId, comment.userId)">Delete</button>
                                 </div>
                                 
                             </div>
