@@ -362,11 +362,11 @@ export default {
         <div class="p-4 text-black">
             <div class="d-flex justify-content-end text-center py-1">
                 <div>
-                    <p class="mb-1 h5">{{ profile.followersCount }}</p>
+                    <p class="mb-1 h5">{{ profile.NumberFollowers }}</p>
                     <p class="small text-muted mb-0">Followers</p>
                 </div>
                 <div class="px-3">
-                    <p class="mb-1 h5">{{ profile.followingCount }}</p>
+                    <p class="mb-1 h5">{{ profile.NumberFollowed }}</p>
                     <p class="small text-muted mb-0">Followings</p>
                 </div>
                 <div class="mb-3 mx-5">

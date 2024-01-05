@@ -2,6 +2,7 @@ package api
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"strconv"
@@ -16,22 +17,9 @@ func (rt *_router) followUser(w http.ResponseWriter, r *http.Request, ps httprou
 	var user User
 
 	// utente da followare
-	// username := ps.ByName("username")
+	username := ps.ByName("username")
 
-	var requestData map[string]string
-	err := json.NewDecoder(r.Body).Decode(&requestData)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-
-	userFollowedID, ok := requestData["username"]
-	if !ok {
-		http.Error(w, "Il campo 'userFollowedId' è obbligatorio", http.StatusBadRequest)
-		return
-	}
-
-	dbuser, err := rt.db.GetUserId(userFollowedID)
+	dbuser, err := rt.db.GetUserId(username)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -66,22 +54,8 @@ func (rt *_router) unfollowUser(w http.ResponseWriter, r *http.Request, ps httpr
 	var user User
 
 	// Validazione dell'utente da unfolloware
-	// username := ps.ByName("username")
-
-	var requestData map[string]string
-	err := json.NewDecoder(r.Body).Decode(&requestData)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-
-	userFollowed, ok := requestData["username"]
-	if !ok {
-		http.Error(w, "Il campo 'userFollowedId' è obbligatorio", http.StatusBadRequest)
-		return
-	}
-
-	dbuser, err := rt.db.GetUserId(userFollowed)
+	username := ps.ByName("username")
+	dbuser, err := rt.db.GetUserId(username)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -95,7 +69,7 @@ func (rt *_router) unfollowUser(w http.ResponseWriter, r *http.Request, ps httpr
 	}
 
 	token := getToken(r.Header.Get("Authorization"))
-
+	println(id)
 	follow.FollowId = id
 	follow.UserFollowedId = user.Id
 	follow.UserId = token
@@ -119,20 +93,7 @@ func (rt *_router) getFollower(w http.ResponseWriter, r *http.Request, ps httpro
 	var follow Follow
 	token := getToken(r.Header.Get("Authorization"))
 
-	var requestData map[string]string
-	err := json.NewDecoder(r.Body).Decode(&requestData)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-
-	userFollowed, ok := requestData["username"]
-	if !ok {
-		http.Error(w, "Il campo 'username' è obbligatorio", http.StatusBadRequest)
-		return
-	}
-
-	user.Username = userFollowed
+	user.Username = ps.ByName("username")
 	dbuser, err := rt.db.CheckUserByUsername(user.ToDatabase())
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -141,6 +102,11 @@ func (rt *_router) getFollower(w http.ResponseWriter, r *http.Request, ps httpro
 	user.FromDatabase(dbuser)
 
 	dbfollow, err := rt.db.GetFollower(user.ToDatabase(), token)
+	if errors.Is(err, database.ErrFollowDoesNotExist) {
+		// Il follow non esiste, restituisci null
+		w.Write([]byte("null"))
+		return
+	}
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

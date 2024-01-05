@@ -55,6 +55,17 @@ export default {
                     }
                 ],
             },
+            follow: {
+                followId: 0,
+                followedId: 0,
+                userId: 0,
+                banStatus: 0,
+            },
+            ban: {
+                banId: 0,
+                bannedId: 0,
+                userId: 0,
+            },
         }
     },
     methods: {
@@ -72,7 +83,11 @@ export default {
                     }
                 })
                 this.profile = response.data
-                //console.log('Profile data:', this.profile); // Aggiunto il console.log
+                let followid = await this.getFollow();
+                if (followid !== 0){
+                    this.follow.followId = followid
+                }
+                console.log('follow:', this.follow); // Aggiunto il console.log
             } catch (e) {
                 if (e.response && e.response.status === 400) {
                     this.errormsg = "Form error, please check all fields and try again. If you think that this is an error, write an e-mail to us.";
@@ -286,6 +301,75 @@ export default {
                     }
                 }
         },
+        async followUser() {
+            try {
+                let response = await this.$axios.post("/user/" + this.$route.params.username + "/follow", {}, {
+                    headers: {
+                        Authorization: "Bearer " + localStorage.getItem("token")
+                    }
+                })
+                this.clear = response.data
+                this.refresh()
+                this.successmsg = "User" + this.$route.params.username + "followed successfully"
+            } catch (e) {
+                if (e.response && e.response.status === 400) {
+                    this.errormsg = "Form error, please check all fields and try again. If you think that this is an error, write an e-mail to us.";
+                    this.detailedmsg = null;
+                } else if (e.response && e.response.status === 500) {
+                    this.errormsg = "An internal error occurred. We will be notified. Please try again later.";
+                    this.detailedmsg = e.toString();
+                } else {
+                    this.errormsg = e.toString();
+                    this.detailedmsg = null;
+                }
+            }
+        },
+        async unfollowUser(followid) {
+            try {
+                let response = await this.$axios.delete("/user/" + this.$route.params.username + "/follow/" + followid , {
+                    headers: {
+                        Authorization: "Bearer " + localStorage.getItem("token")
+                    }
+                })
+                this.clear = response.data
+                this.follow.followId = 0;
+                this.refresh()
+            } catch (e) {
+                if (e.response && e.response.status === 400) {
+                    this.errormsg = "Form error, please check all fields and try again. If you think that this is an error, write an e-mail to us.";
+                    this.detailedmsg = null;
+                } else if (e.response && e.response.status === 500) {
+                    this.errormsg = "An internal error occurred. We will be notified. Please try again later.";
+                    this.detailedmsg = e.toString();
+                } else {
+                    this.errormsg = e.toString();
+                    this.detailedmsg = null;
+                }
+            }
+
+        },
+        async getFollow() {
+            try {
+                let response = await this.$axios.get("/user/" + this.$route.params.username + "/follow", {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem("token")}`
+                }
+                });
+                if (response.data !== null) {
+                    this.follow = response.data
+                    return response.data.followId
+                    }
+                else {
+                    return 0
+                }
+            } catch (error) {
+                if (error.response && error.response.status === 404) {
+                    this.errormsg = "Form error, please check all fields and try again. If you think that this is an error, write an e-mail to us.";
+					this.detailedmsg = null;
+                } 
+            }
+            console.error("Errore durante il recupero dello stato del like:", error);
+        },
 	},
 
     mounted() {
@@ -302,11 +386,11 @@ export default {
         <div class="p-4 text-black">
             <div class="d-flex justify-content-end text-center py-1">
                 <div>
-                    <p class="mb-1 h5">{{ profile.followersCount }}</p>
+                    <p class="mb-1 h5">{{ profile.NumberFollowers }}</p>
                     <p class="small text-muted mb-0">Followers</p>
                 </div>
                 <div class="px-3">
-                    <p class="mb-1 h5">{{ profile.followingCount }}</p>
+                    <p class="mb-1 h5">{{ profile.NumberFollowed }}</p>
                     <p class="small text-muted mb-0">Followings</p>
                 </div>
                 <div class="mb-3 mx-5">
@@ -314,7 +398,8 @@ export default {
                     <p class="small text-muted mb-0">Photos</p>
                 </div>
                 <div>
-                    <button class="btn btn-primary" type="button" @click="doLogout">Follow</button>
+                    <button v-if = "follow.followId === 0" class="btn btn-primary" type="button" @click="followUser">Follow</button>
+                    <button v-if = "follow.followId !== 0" class="btn btn-danger" type="button" @click="unfollowUser(follow.followId)">Unfollow</button>
                 </div>
             </div>
         </div>
@@ -374,7 +459,7 @@ export default {
         </div>
     </div>
 
-    <div id="commentPopup" class="modal fade">
+    <div id="commentPopup" class="modal fade">followUser
         <div class="modal-dialog">
             <div class="modal-content">
                 <!-- Contenuto della finestra di popup -->
