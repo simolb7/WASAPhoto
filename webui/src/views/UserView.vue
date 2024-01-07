@@ -259,9 +259,10 @@ export default {
             }
             console.error("Errore durante il recupero dello stato del like:", error);
         },
-        async likePhoto(photoid) {
+        async likePhoto(ownerid,photoid) {
             try {
-                let response = await this.$axios.post("/user/" + localStorage.getItem('username') + "/photo/" + photoid + "/like", {}, {
+                console.log(ownerid, photoid)
+                let response = await this.$axios.post("/user/" + localStorage.getItem('username') + "/photo/" + photoid + "/like", {userId: ownerid}, {
                     headers: {
                         Authorization: "Bearer " + localStorage.getItem("token")
                     }
@@ -541,7 +542,7 @@ export default {
                             <button v-if="photo.isUnlikeButton" type="button" class="btn btn-danger" @click="unlikePhoto(photo.id, photo.likeId)">
                                 Unlike
                                 </button>
-                            <button v-if="!photo.isUnlikeButton" type="button" class="btn btn-primary" @click="likePhoto( photo.id)">
+                            <button v-if="!photo.isUnlikeButton" type="button" class="btn btn-primary" @click="likePhoto(photo.userId, photo.id)">
                                 Like
                             </button>
                             

@@ -13,14 +13,18 @@ import (
 
 func (rt *_router) likePhoto(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
 	var like Like
-	var user User
-	username := ps.ByName("username")
-	dbuser, err := rt.db.GetUserId(username)
+	type LikeRequest struct {
+		UserId int `json:"userId"`
+	}
+
+	var requestBody LikeRequest
+
+	err := json.NewDecoder(r.Body).Decode(&requestBody)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	user.FromDatabase(dbuser)
+
 	photoid, err := strconv.ParseUint(ps.ByName("photoid"), 10, 64)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -30,7 +34,7 @@ func (rt *_router) likePhoto(w http.ResponseWriter, r *http.Request, ps httprout
 
 	like.UserId = token
 	like.PhotoId = photoid
-	like.PhotoOwner = user.Id
+	like.PhotoOwner = uint64(requestBody.UserId)
 
 	dblike, err := rt.db.InsertLike(like.LikeToDatabase())
 	if err != nil {

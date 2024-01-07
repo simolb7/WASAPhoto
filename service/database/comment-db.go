@@ -41,6 +41,7 @@ func (db *appdbimpl) RemoveComment(c Comment) error {
 
 // Database function that removes each comments of a user from
 func (db *appdbimpl) RemoveComments(user uint64, banned uint64) error {
+	println("sono qui", user, " ", banned)
 	_, err := db.c.Exec("DELETE FROM comments WHERE userId = ? AND photoOwnerID = ?", banned, user)
 	if err != nil {
 		return err
