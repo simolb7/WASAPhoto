@@ -18,20 +18,7 @@ func (rt *_router) banUser(w http.ResponseWriter, r *http.Request, ps httprouter
 
 	token := getToken(r.Header.Get("Authorization"))
 
-	var requestData map[string]string
-	err := json.NewDecoder(r.Body).Decode(&requestData)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-
-	userban, ok := requestData["username"]
-	if !ok {
-		http.Error(w, "Il campo 'username' è obbligatorio", http.StatusBadRequest)
-		return
-	}
-
-	dbuser, err := rt.db.GetUserId(userban)
+	dbuser, err := rt.db.GetUserId(ps.ByName("username"))
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -73,28 +60,17 @@ func (rt *_router) unbanUser(w http.ResponseWriter, r *http.Request, ps httprout
 		return
 	}
 
-	var requestData map[string]string
-	err1 := json.NewDecoder(r.Body).Decode(&requestData)
-	if err1 != nil {
-		http.Error(w, err1.Error(), http.StatusBadRequest)
-		return
-	}
-
-	userban, ok := requestData["username"]
-	if !ok {
-		http.Error(w, "Il campo 'username' è obbligatorio", http.StatusBadRequest)
-		return
-	}
-
-	dbuser, err := rt.db.GetUserId(userban)
+	dbuser, err := rt.db.GetUserId(ps.ByName("username"))
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 	user.FromDatabase(dbuser)
+
 	ban.BanId = id
 	ban.UserId = token
 	ban.BannedId = user.Id
+
 	err = rt.db.RemoveBan(ban.BanToDatabase())
 	if errors.Is(err, database.ErrBanDoesNotExist) {
 		http.Error(w, err.Error(), http.StatusNotFound)
@@ -114,20 +90,7 @@ func (rt *_router) getBans(w http.ResponseWriter, r *http.Request, ps httprouter
 	var ban Ban
 	token := getToken(r.Header.Get("Authorization"))
 
-	var requestData map[string]string
-	err := json.NewDecoder(r.Body).Decode(&requestData)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-
-	userban, ok := requestData["username"]
-	if !ok {
-		http.Error(w, "Il campo 'username' è obbligatorio", http.StatusBadRequest)
-		return
-	}
-
-	user.Username = userban
+	user.Username = ps.ByName("username")
 	dbuser, err := rt.db.CheckUserByUsername(user.ToDatabase())
 
 	if err != nil {
@@ -137,13 +100,18 @@ func (rt *_router) getBans(w http.ResponseWriter, r *http.Request, ps httprouter
 
 	user.FromDatabase(dbuser)
 	dban, err := rt.db.GetBan(user.ToDatabase(), token)
+	if errors.Is(err, database.ErrBanDoesNotExist) {
+		// Il ban non esiste, restituisci null
+		w.Write([]byte("null"))
+		return
+	}
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 
 	}
-	ban.BanFromDatabase(dban)
 
+	ban.BanFromDatabase(dban)
 	w.Header().Set("Content-Type", "application/json")
 	_ = json.NewEncoder(w).Encode(ban)
 }

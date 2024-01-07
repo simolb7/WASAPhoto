@@ -1,8 +1,6 @@
 <script>
-//import LogModal from "../components/Logmodal.vue";
 
 export default {
-    //components: { LogModal },
     data: function () {
         return {
             errormsg: null,
@@ -87,7 +85,11 @@ export default {
                 if (followid !== 0){
                     this.follow.followId = followid
                 }
-                console.log('follow:', this.follow); // Aggiunto il console.log
+                let banid = await this.getBan();
+                if (banid !== 0){
+                    this.ban.banId = banid
+                }
+               
             } catch (e) {
                 if (e.response && e.response.status === 400) {
                     this.errormsg = "Form error, please check all fields and try again. If you think that this is an error, write an e-mail to us.";
@@ -310,7 +312,6 @@ export default {
                 })
                 this.clear = response.data
                 this.refresh()
-                this.successmsg = "User" + this.$route.params.username + "followed successfully"
             } catch (e) {
                 if (e.response && e.response.status === 400) {
                     this.errormsg = "Form error, please check all fields and try again. If you think that this is an error, write an e-mail to us.";
@@ -368,8 +369,77 @@ export default {
 					this.detailedmsg = null;
                 } 
             }
-            console.error("Errore durante il recupero dello stato del like:", error);
+            console.error("Errore durante il recupero dello stato del follow:", error);
         },
+        async banUser() {
+            try {
+                let response = await this.$axios.post("/user/" + this.$route.params.username + "/ban", {}, {
+                    headers: {
+                        Authorization: "Bearer " + localStorage.getItem("token")
+                    }
+                })
+                this.clear = response.data
+                this.refresh()
+            } catch (e) {
+                if (e.response && e.response.status === 400) {
+                    this.errormsg = "Form error, please check all fields and try again. If you think that this is an error, write an e-mail to us.";
+                    this.detailedmsg = null;
+                } else if (e.response && e.response.status === 500) {
+                    this.errormsg = "An internal error occurred. We will be notified. Please try again later.";
+                    this.detailedmsg = e.toString();
+                } else {
+                    this.errormsg = e.toString();
+                    this.detailedmsg = null;
+                }
+            }
+        },
+        async unbanUser() {
+            try {
+                let response = await this.$axios.delete("/user/" + this.$route.params.username + "/ban/" + this.ban.banId, {
+                    headers: {
+                        Authorization: "Bearer " + localStorage.getItem("token")
+                    }
+                })
+                this.clear = response.data
+                this.ban.banId = 0
+                this.refresh()
+            } catch (e) {
+                if (e.response && e.response.status === 400) {
+                    this.errormsg = "Form error, please check all fields and try again. If you think that this is an error, write an e-mail to us.";
+                    this.detailedmsg = null;
+                } else if (e.response && e.response.status === 500) {
+                    this.errormsg = "An internal error occurred. We will be notified. Please try again later.";
+                    this.detailedmsg = e.toString();
+                } else {
+                    this.errormsg = e.toString();
+                    this.detailedmsg = null;
+                }
+            }
+        },
+        async getBan() {
+            try {
+                let response = await this.$axios.get("/user/" + this.$route.params.username + "/ban", { //simone
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem("token")}` //Marta
+                }
+                });
+                if (response.data !== null) {
+                    this.ban = response.data
+                    return response.data.banId
+                    }
+                else {
+                    return 0
+                }
+            } catch (error) {
+                if (error.response && error.response.status === 404) {
+                    this.errormsg = "Form error, please check all fields and try again. If you think that this is an error, write an e-mail to us.";
+					this.detailedmsg = null;
+                } 
+            }
+            console.error("Errore durante il recupero dello stato del ban:", error);
+        },
+        
+
 	},
 
     mounted() {
@@ -380,11 +450,12 @@ export default {
 </script>
 
 <template>
+
     <div
         class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-5 border-bottom">
         <h1 class="h2">Profile of <b>{{ profile.username }}</b>  </h1>
         <div class="p-4 text-black">
-            <div class="d-flex justify-content-end text-center py-1">
+            <div v-if = "ban.banId === 0" class="d-flex justify-content-end text-center py-1">
                 <div>
                     <p class="mb-1 h5">{{ profile.NumberFollowers }}</p>
                     <p class="small text-muted mb-0">Followers</p>
@@ -401,17 +472,41 @@ export default {
                     <button v-if = "follow.followId === 0" class="btn btn-primary" type="button" @click="followUser">Follow</button>
                     <button v-if = "follow.followId !== 0" class="btn btn-danger" type="button" @click="unfollowUser(follow.followId)">Unfollow</button>
                 </div>
+                <div class="mb-3 mx-5">
+                    <button class="btn btn-danger" type="button" @click="banUser">Ban</button>
+                </div>
             </div>
         </div>
     </div>
+
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom"
+        v-if="ban.banId !== 0 && ban.userId !== token">
+        
+        <div class="alert alert-danger text-center mx-auto" role="alert">
+            <h4 class="alert-heading">You have banned @{{ profile.username }}</h4>
+            <p>Remove ban to interact.</p>
+            <div >
+                    <button class="btn btn-primary" type="button" @click="unbanUser">Remove ban</button>
+            </div>
+            <hr>
+            <p class="mb-0"></p>
+        </div>
+    </div>
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom"
+        v-if="ban.banId !== 0 && ban.userId === token">
+        <div class="alert alert-danger text-center mx-auto" role="alert">
+            <h4 class="alert-heading">Impossible perform this action...</h4>
+            <p>User @{{ profile.username }} has banned you.</p>
+            <p>You are not allowed to interact.</p>
+            <hr>
+            <p class="mb-0"></p>
+        </div>
+    </div>
+
     
-   
     <ErrorMsg v-if="errormsg" :msg="errormsg"></ErrorMsg>
 
-
-
-
-    <div class="row" v-if="photoList && photoList.photos && photoList.photos.length > 0">
+    <div class="row" v-if="photoList && photoList.photos && photoList.photos.length > 0 && ban.banId === 0 ">
         <div class="col-md-4" v-for="photo in photoList.photos" :key="photo.id">
             <div class="card mb-4 shadow-sm">
                 <img class="card-img-top" :src=photo.file alt="Card image cap">
