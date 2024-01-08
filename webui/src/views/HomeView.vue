@@ -68,7 +68,7 @@ export default {
 				<div class="btn-group me-2">
 					<input type="file" accept="image/*" class="btn btn-outline-primary" @change="uploadFile" ref="file">
 					<button class="btn btn-success" @click="submitFile">Upload</button>
-					<button class="btn btn-primary mx-5" type="button" @click="ViewProfile">Profilo</button>
+					<button class="btn btn-primary mx-5" type="button" @click="ViewProfile">Profile</button>
 				</div>
 			</div>
 		</div>

@@ -304,7 +304,7 @@ export default {
         },
         async likePhoto(username, photoid) {
             try {
-                let response = await this.$axios.post("/user/" + username + "/photo/" + photoid + "/like", {}, {
+                let response = await this.$axios.post("/user/" + username + "/photo/" + photoid + "/like", {userId: this.profile.UserId}, {
                     headers: {
                         Authorization: "Bearer " + localStorage.getItem("token")
                     }
