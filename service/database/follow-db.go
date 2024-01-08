@@ -38,6 +38,22 @@ func (db *appdbimpl) RemoveFollow(FollowId uint64, UserId uint64, FollowedId uin
 	return nil
 }
 
+func (db *appdbimpl) RemoveFollows(UserId uint64, FollowedId uint64) error {
+	res, err := db.c.Exec("DELETE FROM followers WHERE userId = ? AND followerId = ?", UserId, FollowedId)
+
+	if err != nil {
+		return err
+	}
+	affected, err := res.RowsAffected()
+	if err != nil {
+		return err
+	}
+	if affected == 0 {
+		return ErrFollowDoesNotExist
+	}
+	return nil
+}
+
 // Database function that returns a user's count of followers
 func (db *appdbimpl) GetFollowersCount(id uint64) (int, error) {
 	var count int

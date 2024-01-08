@@ -132,3 +132,30 @@ func (rt *_router) getUserPhotos(w http.ResponseWriter, r *http.Request, ps http
 	w.Header().Set("Content-Type", "image/*")
 	_ = json.NewEncoder(w).Encode(photoList)
 }
+
+func (rt *_router) getUserFollowedPhotos(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
+	var requestUser User
+	var photoList database.Photos
+
+	token := getToken(r.Header.Get("Authorization"))
+	requestUser.Id = token
+
+	dbrequestuser, err := rt.db.CheckUserById(requestUser.ToDatabase())
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	requestUser.FromDatabase(dbrequestuser)
+
+	photos, err := rt.db.GetPhotosFollower(token)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	photoList.RequestUser = requestUser.Id
+	photoList.Identifier = requestUser.Id
+	photoList.Photos = photos
+	w.Header().Set("Content-Type", "image/*")
+	_ = json.NewEncoder(w).Encode(photoList)
+}

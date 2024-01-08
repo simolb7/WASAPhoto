@@ -79,6 +79,42 @@ func (db *appdbimpl) GetPhotos(u User, token uint64) ([]Photo, error) {
 	return ret, rows.Err()
 }
 
+func (db *appdbimpl) GetPhotosFollower(token uint64) ([]Photo, error) {
+	var ret []Photo
+	rows, err := db.c.Query("SELECT Id, userId, photo, date FROM photos WHERE userId IN (SELECT followerId FROM followers WHERE userId=?) ORDER BY date DESC LIMIT 10", token)
+	//rows, err := db.c.Query("SELECT Id, userId, photo, date FROM photos, followers f  WHERE f.userId = ? ORDER BY p.date DESC LIMIT 10", token)
+
+	if err != nil {
+		return ret, ErrUserDoesNotExist
+	}
+
+	defer func() {
+		_ = rows.Close()
+	}()
+
+	for rows.Next() {
+		var b Photo
+		err = rows.Scan(&b.PhotoId, &b.UserId, &b.File, &b.Date)
+		if err != nil {
+			return nil, err
+		}
+		if err := db.c.QueryRow(`SELECT COUNT(*) FROM likes WHERE photoId = ?`, b.PhotoId).Scan(&b.LikeNumber); err != nil {
+			if errors.Is(err, sql.ErrNoRows) {
+				return nil, err
+			}
+		}
+		if err := db.c.QueryRow(`SELECT COUNT(*) FROM comments WHERE photoId = ?`, b.PhotoId).Scan(&b.CommentNumber); err != nil {
+			if errors.Is(err, sql.ErrNoRows) {
+				return nil, err
+			}
+		}
+
+		ret = append(ret, b)
+	}
+
+	return ret, rows.Err()
+}
+
 // Database function that returns the count of photo uploaded by the user
 func (db *appdbimpl) GetPhotosCount(id uint64) (int, error) {
 	var count int

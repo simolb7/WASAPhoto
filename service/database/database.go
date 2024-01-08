@@ -84,15 +84,16 @@ type AppDatabase interface {
 	CreateUser(User) (User, error)
 	SetUsername(User, string) (User, error)
 	GetUserId(string) (User, error)
+	GetUsername(uint64) (User, error)
 	CheckUserById(User) (User, error)
 	CheckUserByUsername(User) (User, error)
 	CheckUser(User) (User, error)
 	GetStream(u User) ([]Photo, error)
-	// GetUserById(id int) (User, error)
 
 	InsertPhoto(p Photo) (Photo, error)
 	RemovePhoto(id uint64) error
 	GetPhotos(u User, token uint64) ([]Photo, error)
+	GetPhotosFollower(token uint64) ([]Photo, error)
 	GetPhotosCount(id uint64) (int, error)
 	CheckPhoto(p Photo) (Photo, error)
 
@@ -104,6 +105,7 @@ type AppDatabase interface {
 
 	InsertFollow(f Follow) (Follow, error)
 	RemoveFollow(FollowId uint64, UserId uint64, FollowedId uint64) error
+	RemoveFollows(UserId uint64, FollowedId uint64) error
 	GetFollowersCount(id uint64) (int, error)
 	GetFollowedCount(id uint64) (int, error)
 	GetFollower(u User, token uint64) (Follow, error)

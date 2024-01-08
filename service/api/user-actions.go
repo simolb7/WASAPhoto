@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"net/http"
+	"strconv"
 
 	"github.com/julienschmidt/httprouter"
 	"github.com/simolb7/WASAPhoto/service/api/reqcontext"
@@ -116,6 +117,40 @@ func (rt *_router) getUserProfile(w http.ResponseWriter, r *http.Request, ps htt
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	_ = json.NewEncoder(w).Encode(profile)
+}
+
+func (rt *_router) getUsername(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
+	var user User
+	var requestUser User
+	var id uint64
+
+	token := getToken(r.Header.Get("Authorization"))
+	requestUser.Id = token
+	dbrequestuser, err := rt.db.CheckUserById(requestUser.ToDatabase())
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	requestUser.FromDatabase(dbrequestuser)
+
+	idstr := ps.ByName("id")
+	id, err = strconv.ParseUint(idstr, 10, 64)
+	if err != nil {
+		// Gestisci l'errore, ad esempio restituisci un errore HTTP o fai altro
+		http.Error(w, "Invalid ID", http.StatusBadRequest)
+		return
+	}
+	dbuser, err := rt.db.GetUsername(id)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	user.FromDatabase(dbuser)
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	_ = json.NewEncoder(w).Encode(user)
 }
 
 func (rt *_router) getMyStream(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
