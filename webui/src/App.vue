@@ -104,6 +104,10 @@ export default {
         	</div>
 		</header>
 
+		<div class="col-md-9 ms-sm-auto col-lg-12 px-md-4 mt-4" > 
+			<ErrorMsg v-if="errormsg" :msg="errormsg"></ErrorMsg>
+		</div>
+	
 		
 		<div class="container-fluid">
 			<div class="row">
@@ -112,7 +116,7 @@ export default {
 				</main>
 			</div>
 		</div>
-		<ErrorMsg v-if="errormsg" :msg="errormsg"></ErrorMsg>
+		
 
 	</div>
 

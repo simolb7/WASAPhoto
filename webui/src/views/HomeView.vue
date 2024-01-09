@@ -129,8 +129,13 @@ export default {
                     if (this.photoList && this.photoList.photos && this.photoList.photos.length > 0) {
                         // Ci sono foto, non dovresti vedere il messaggio di errore
                     } else {
-                        this.errormsg = " Your following haven't post any photos yet";
-                        this.detailedmsg = null;
+                        if (this.profile.followingCount === 0){
+                            this.errormsg = "  You’re not following anyone, start following users to improve your home!";
+                            this.detailedmsg = null;
+                        } else {
+                            this.errormsg = " Your following haven't post any photos yet";
+                            this.detailedmsg = null;
+                        }
                     }
                 }
             }

@@ -45,7 +45,7 @@ func (rt *_router) banUser(w http.ResponseWriter, r *http.Request, ps httprouter
 		return
 	}
 	err = rt.db.RemoveFollows(token, user.Id)
-	if err != nil {
+	if err != nil && !errors.Is(err, database.ErrFollowDoesNotExist) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}

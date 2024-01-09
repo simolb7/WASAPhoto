@@ -40,7 +40,7 @@ func (db *appdbimpl) RemoveFollow(FollowId uint64, UserId uint64, FollowedId uin
 
 func (db *appdbimpl) RemoveFollows(UserId uint64, FollowedId uint64) error {
 	res, err := db.c.Exec("DELETE FROM followers WHERE userId = ? AND followerId = ?", UserId, FollowedId)
-
+	res1, err1 := db.c.Exec("DELETE FROM followers WHERE userId = ? AND followerId = ?", FollowedId, UserId)
 	if err != nil {
 		return err
 	}
@@ -49,6 +49,16 @@ func (db *appdbimpl) RemoveFollows(UserId uint64, FollowedId uint64) error {
 		return err
 	}
 	if affected == 0 {
+		return ErrFollowDoesNotExist
+	}
+	if err1 != nil {
+		return err1
+	}
+	affected1, err := res1.RowsAffected()
+	if err1 != nil {
+		return err1
+	}
+	if affected1 == 0 {
 		return ErrFollowDoesNotExist
 	}
 	return nil
