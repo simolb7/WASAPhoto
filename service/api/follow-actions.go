@@ -104,7 +104,11 @@ func (rt *_router) getFollower(w http.ResponseWriter, r *http.Request, ps httpro
 	dbfollow, err := rt.db.GetFollower(user.ToDatabase(), token)
 	if errors.Is(err, database.ErrFollowDoesNotExist) {
 		// Il follow non esiste, restituisci null
-		w.Write([]byte("null"))
+		_, err := w.Write([]byte("null"))
+		if err != nil {
+			http.Error(w, "Failed to write response", http.StatusInternalServerError)
+			return
+		}
 		return
 	}
 	if err != nil {

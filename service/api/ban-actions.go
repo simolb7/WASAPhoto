@@ -108,7 +108,13 @@ func (rt *_router) getBans(w http.ResponseWriter, r *http.Request, ps httprouter
 	dban, err := rt.db.GetBan(user.ToDatabase(), token)
 	if errors.Is(err, database.ErrBanDoesNotExist) {
 		// Il ban non esiste, restituisci null
-		w.Write([]byte("null"))
+
+		_, err := w.Write([]byte("null"))
+		if err != nil {
+			// Gestisci l'errore in qualche modo
+			http.Error(w, "Failed to write response", http.StatusInternalServerError)
+			return
+		}
 		return
 	}
 	if err != nil {

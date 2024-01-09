@@ -125,8 +125,14 @@ func (rt *_router) getLike(w http.ResponseWriter, r *http.Request, ps httprouter
 
 	if errors.Is(err, database.ErrLikeDoesNotExist) {
 		// Il like non esiste, restituisci null
-		w.Write([]byte("null"))
+		_, err := w.Write([]byte("null"))
+		if err != nil {
+
+			http.Error(w, "Failed to write response", http.StatusInternalServerError)
+			return
+		}
 		return
+
 	}
 
 	if err != nil {
