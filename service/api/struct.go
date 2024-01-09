@@ -51,7 +51,6 @@ type Comment struct {
 	UserId       uint64 `json:"userId"`
 	PhotoId      uint64 `json:"photoId"`
 	PhotoOwnerID uint64 `json:"photoOwnerID"`
-	Username     string `json:"username"`
 	Content      string `json:"content"`
 }
 
@@ -138,7 +137,6 @@ func (c *Comment) CommentFromDatabase(comment database.Comment) {
 	c.CommentId = comment.CommentId
 	c.UserId = comment.UserId
 	c.PhotoId = comment.PhotoId
-	c.Username = comment.Username
 	c.Content = comment.Content
 }
 
@@ -148,7 +146,6 @@ func (c *Comment) CommentToDatabase() database.Comment {
 		UserId:       c.UserId,
 		PhotoId:      c.PhotoId,
 		PhotoOwnerID: c.PhotoOwnerID,
-		Username:     c.Username,
 		Content:      c.Content,
 	}
 }

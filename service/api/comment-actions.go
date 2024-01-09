@@ -46,7 +46,6 @@ func (rt *_router) commentPhoto(w http.ResponseWriter, r *http.Request, ps httpr
 
 	comment.UserId = token
 	comment.PhotoId = photoid
-	comment.Username = username
 
 	dbcomment, err := rt.db.InsertComment(comment.CommentToDatabase())
 	if err != nil {

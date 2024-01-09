@@ -45,9 +45,8 @@ export default {
                         userId: 0,
                         photoId: 0,
                         photoOwnerID: 0,
-                        //ownerUsername: "",
-                        username: "",
                         content: "",
+                        ownerUsername: "",
                     }
                 ],
             },
@@ -198,6 +197,11 @@ export default {
                     }
                 })
                 this.photoComments = response.data;
+                if (this.photoComments && this.photoComments.comments && this.photoComments.comments.length > 0){
+                    for (let i = 0; i < this.photoComments.comments.length; i++) {
+                        this.photoComments.comments[i].ownerUsername = await this.getusername(this.photoComments.comments[i].userId);
+                    }
+                }
                 const modal = new bootstrap.Modal(document.getElementById('commentPopup'));
                 modal.show();
             } catch (e) {
@@ -237,7 +241,7 @@ export default {
         canDeleteComment(comment) {
         // Supponiamo che tu abbia informazioni sull'utente autenticato e sulla proprietà della foto
             //console.log('comment:', comment);
-            const isAuthenticatedUser = localStorage.getItem("username") === comment.username;
+            const isAuthenticatedUser = localStorage.getItem("username") === comment.ownerUsername;
             const isPhotoOwner = comment.photoOwnerID === parseInt(localStorage.getItem("token"));
             /*console.log('comment ID:', comment.id);
             console.log('id user auth:', localStorage.getItem("token"));
@@ -407,7 +411,7 @@ export default {
                         <li v-for="comment in photoComments.comments" :key="comment.id" class="comment-item ">
                             <div  class="d-flex justify-content-between align-items-center">
                                 <div class="comment-container"> 
-                                    <strong>{{ comment.username }}</strong> 
+                                    <strong>{{ comment.ownerUsername }}</strong> 
                                     <p class = "comment-content">{{ comment.content }}</p>
                                 </div>
                                 <div class = "ml-auto"  v-if="canDeleteComment(comment)" >
