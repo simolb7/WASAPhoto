@@ -8,7 +8,17 @@ export default {
 			username: localStorage.getItem('username'),
 			token: localStorage.getItem('token'),
 			images: null,
+            searchByUsername: "",
+
 			profile: {
+				requestId: 0,
+				id: 0,
+				username: "",
+				followersCount: 0,
+				followingCount: 0,
+				photoCount: 0,
+			},
+            profileSearched: {
 				requestId: 0,
 				id: 0,
 				username: "",
@@ -155,8 +165,6 @@ export default {
             }
             console.error("Errore durante il recupero dello stato del like:", error);
         },
-
-
 		formatDateTime(dateTime) {
             //timeZoneName: 'short' 
             const options = { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit'};
@@ -239,16 +247,9 @@ export default {
 			}
 		},
         canDeleteComment(comment) {
-        // Supponiamo che tu abbia informazioni sull'utente autenticato e sulla proprietà della foto
-            //console.log('comment:', comment);
             const isAuthenticatedUser = localStorage.getItem("username") === comment.ownerUsername;
             const isPhotoOwner = comment.photoOwnerID === parseInt(localStorage.getItem("token"));
-            /*console.log('comment ID:', comment.id);
-            console.log('id user auth:', localStorage.getItem("token"));
-            console.log('id owner:', comment.photoOwnerID);
-            console.log('isAuthenticatedUser:', isAuthenticatedUser);
-            console.log('isPhotoOwner:', isPhotoOwner);
-            */// Ritorna true solo se l'utente è autenticato e ha il permesso di eliminare il commento
+       
             return isAuthenticatedUser || isPhotoOwner;
         },
         async getLikeStatus(username, photoid) {
@@ -322,6 +323,62 @@ export default {
                     }
                 }
         },
+        async SearchUser() {
+			
+			if (this.searchByUsername === this.username) {
+				this.errormsg = "You can't search yourself."
+			} else if (this.searchByUsername === "") {
+				this.errormsg = "Emtpy username field."
+			} else {
+				try {
+					let response = await this.$axios.get("user/" + this.searchByUsername + "/profile", {
+						headers: {
+							Authorization: "Bearer " + localStorage.getItem("token")
+						}
+					})
+					this.profileSearched = response.data
+
+					let ifban = await this.checkBanStatus(this.profileSearched.id);
+                  
+					if (ifban){
+						this.errormsg = "You are not allowed to view this user's profile.";
+					} else {
+						this.$router.push({ path: '/user/' + this.searchByUsername + '/view' })
+					}
+				} catch (e) {
+					if (e.response && e.response.status === 400) {
+						this.errormsg = "Form error, please check all fields and try again. If you think that this is an error, write an e-mail to us.";
+						this.detailedmsg = null;
+					} else if (e.response && e.response.status === 500) {
+						this.errormsg = "User does not exist on WASAPhoto.";
+						this.detailedmsg = e.toString();
+					} else {
+						this.errormsg = e.toString();
+						this.detailedmsg = null;
+					}
+				}
+			}
+		},
+		async checkBanStatus(userid) {
+			try {
+                let response = await this.$axios.get("/user/" + localStorage.getItem('username') + "/ban", { 
+                headers: {
+                    Authorization: `Bearer ${userid}` 
+                }
+                });
+                if (response.data === null) {
+                    return false
+				} else {
+                    return true
+                }
+            } catch (error) {
+                if (error.response && error.response.status === 404) {
+                    this.errormsg = "Form error, please check all fields and try again. If you think that this is an error, write an e-mail to us.";
+					this.detailedmsg = null;
+                } 
+            }
+            console.error("Errore durante il recupero dello stato del ban:", error);
+    	},
 		async refresh() {
             await this.streamFollowers();
             
@@ -334,6 +391,14 @@ export default {
 </script>
 
 <template>
+
+    <div class="d-flex justify-content-center mb-3">
+        <form class="d-flex mx-auto w-50" @submit.prevent="SearchUser" >
+            <input type="text" id="searchUserUsername" v-model="searchByUsername" class="form-control me-2 " placeholder="Search user" aria-label="Search">
+            <button class="btn btn-light" type="submit"> Search </button>
+        </form>
+    </div>
+    
 	<div>
 		<div
 			class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
@@ -347,8 +412,13 @@ export default {
 			</div>
 		</div>
 
-		<ErrorMsg v-if="errormsg" :msg="errormsg"></ErrorMsg>
+		
 	</div>
+
+
+    <ErrorMsg v-if="errormsg" :msg="errormsg"></ErrorMsg>
+
+    
 
 	<div class="row" v-if="photoList && photoList.photos && photoList.photos.length > 0">
         <div class="col-md-4" v-for="photo in photoList.photos" :key="photo.id">

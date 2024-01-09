@@ -69,7 +69,7 @@ func (rt *_router) unfollowUser(w http.ResponseWriter, r *http.Request, ps httpr
 	}
 
 	token := getToken(r.Header.Get("Authorization"))
-	println(id)
+
 	follow.FollowId = id
 	follow.UserFollowedId = user.Id
 	follow.UserId = token
