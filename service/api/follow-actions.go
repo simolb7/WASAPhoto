@@ -76,7 +76,7 @@ func (rt *_router) unfollowUser(w http.ResponseWriter, r *http.Request, ps httpr
 
 	// Rimozione dell'istanza Follow dal database
 	err = rt.db.RemoveFollow(follow.FollowId, follow.UserId, follow.UserFollowedId)
-	if err == database.ErrBanDoesNotExist {
+	if errors.Is(err, database.ErrFollowDoesNotExist) {
 		http.Error(w, err.Error(), http.StatusNotFound)
 		return
 	}
@@ -104,8 +104,8 @@ func (rt *_router) getFollower(w http.ResponseWriter, r *http.Request, ps httpro
 	dbfollow, err := rt.db.GetFollower(user.ToDatabase(), token)
 	if errors.Is(err, database.ErrFollowDoesNotExist) {
 		// Il follow non esiste, restituisci null
-		_, err := w.Write([]byte("null"))
-		if err != nil {
+		_, err1 := w.Write([]byte("null"))
+		if err1 != nil {
 			http.Error(w, "Failed to write response", http.StatusInternalServerError)
 			return
 		}

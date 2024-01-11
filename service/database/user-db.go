@@ -21,6 +21,9 @@ func (db *appdbimpl) CreateUser(u User) (User, error) {
 
 	// creo utente
 	res, err := db.c.Exec("INSERT INTO users(username) VALUES (?)", u.Username)
+	if err != nil {
+		return u, err
+	}
 	LastInsertID, err := res.LastInsertId()
 	if err != nil {
 		return u, err
@@ -121,7 +124,7 @@ func (db *appdbimpl) CheckUser(u User) (User, error) {
 // Database function that gets the stream of a user
 func (db *appdbimpl) GetStream(u User) ([]Photo, error) {
 
-	rows, err := db.c.Query("SELECT Id, userId, photo, date FROM photos WHERE userId IN (SELECT followerId FROM followers WHERE userId=? AND followerId NOT IN (SELECT userId FROM bans WHERE bannedId=?))")
+	rows, err := db.c.Query("SELECT Id, userId, photo, date FROM photos WHERE userId IN (SELECT followerId FROM followers WHERE userId=? AND followerId NOT IN (SELECT userId FROM bans WHERE bannedId=?))", u.Id, u.Id)
 
 	if err != nil {
 		return nil, ErrUserDoesNotExist

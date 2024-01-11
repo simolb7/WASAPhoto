@@ -121,7 +121,7 @@ func (rt *_router) getUserPhotos(w http.ResponseWriter, r *http.Request, ps http
 		return
 	}
 	user.FromDatabase(dbuser)
-	photos, err := rt.db.GetPhotos(user.ToDatabase(), token)
+	photos, err := rt.db.GetPhotos(user.ToDatabase())
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

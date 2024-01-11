@@ -43,7 +43,7 @@ func (db *appdbimpl) RemovePhoto(id uint64) error {
 }
 
 // Database function that returns each photo of a specific user
-func (db *appdbimpl) GetPhotos(u User, token uint64) ([]Photo, error) {
+func (db *appdbimpl) GetPhotos(u User) ([]Photo, error) {
 	var ret []Photo
 	rows, err := db.c.Query("SELECT Id, userId, photo, date FROM photos WHERE userId = ?", u.Id)
 

@@ -91,7 +91,7 @@ type AppDatabase interface {
 
 	InsertPhoto(p Photo) (Photo, error)
 	RemovePhoto(id uint64) error
-	GetPhotos(u User, token uint64) ([]Photo, error)
+	GetPhotos(u User) ([]Photo, error)
 	GetPhotosFollower(token uint64) ([]Photo, error)
 	GetPhotosCount(id uint64) (int, error)
 	CheckPhoto(p Photo) (Photo, error)
