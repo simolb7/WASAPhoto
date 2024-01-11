@@ -395,7 +395,7 @@ export default {
     <div class="d-flex justify-content-center mb-3">
         <form class="d-flex mx-auto w-50" @submit.prevent="SearchUser" >
             <input type="text" id="searchUserUsername" v-model="searchByUsername" class="form-control me-2 " placeholder="Search user" aria-label="Search">
-            <button class="btn btn-light" type="submit"> Search </button>
+            <button class="btn btn-light " type="submit"> Search </button>
         </form>
     </div>
     

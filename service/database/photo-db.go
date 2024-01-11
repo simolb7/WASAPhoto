@@ -81,7 +81,6 @@ func (db *appdbimpl) GetPhotos(u User, token uint64) ([]Photo, error) {
 func (db *appdbimpl) GetPhotosFollower(token uint64) ([]Photo, error) {
 	var ret []Photo
 	rows, err := db.c.Query("SELECT Id, userId, photo, date FROM photos WHERE userId IN (SELECT followerId FROM followers WHERE userId=?) ORDER BY date DESC LIMIT 10", token)
-	//rows, err := db.c.Query("SELECT Id, userId, photo, date FROM photos, followers f  WHERE f.userId = ? ORDER BY p.date DESC LIMIT 10", token)
 
 	if err != nil {
 		return ret, ErrUserDoesNotExist

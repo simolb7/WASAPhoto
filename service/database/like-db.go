@@ -41,7 +41,6 @@ func (db *appdbimpl) RemoveLike(l Like) error {
 
 // Database function that removes each like of a user due to ban
 func (db *appdbimpl) RemoveLikes(user uint64, banned uint64) error {
-	println("sono qui", user, " ", banned)
 	_, err := db.c.Exec("DELETE FROM likes WHERE userId = ? AND photoOwner = ?", banned, user)
 	if err != nil {
 		return err
