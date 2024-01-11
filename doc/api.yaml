@@ -182,7 +182,7 @@ components:
       description: "Comment schema"
       type: object
       properties: 
-        photoOwner:
+        photoOwnerID:
           description:  Owner of the photo.
           type: string
           pattern: '^.*?$'
@@ -203,6 +203,13 @@ components:
           example: 56A
           minLength: 3
           maxLength: 16
+        username:
+          type: string
+          description: user
+          example: Maria
+          pattern: '^.*?$'
+          minLength: 3
+          maxLength: 16
         content:
           description: Content of the comment
           type: string
@@ -215,7 +222,7 @@ components:
       description: "Comment schema"
       type: object
       properties: 
-        photoOwner:
+        photoOwnerID:
           description:  Owner of the photo.
           type: string
           pattern: '^.*?$'
@@ -247,6 +254,13 @@ components:
           minLength: 3
           maxLength: 16
           readOnly: true
+        username:
+          type: string
+          description: user
+          example: Maria
+          pattern: '^.*?$'
+          minLength: 3
+          maxLength: 16
         content:
           description: Content of the comment
           type: string
@@ -473,7 +487,88 @@ components:
                 type: integer
                 example: 0
                 minimum: 0   
-                  
+    comments:
+      title: comments
+      description: "comments schema"
+      type: object
+      properties: 
+        requestID:
+          description: Unique request identifier.
+          type: string
+          pattern: '^.*?$'
+          example: AA72
+          minLength: 3
+          maxLength: 16
+          readOnly: true
+        photoID: 
+          description: Unique photo identifier.
+          type: string
+          pattern: '^.*?$'
+          example: 472S
+          readOnly: true
+          minLength: 3
+          maxLength: 16
+        userID:
+          description: Owner of the photo.
+          type: string
+          pattern: '^.*?$'
+          example: 56A
+          minLength: 3
+          maxLength: 16
+          readOnly: true
+        comments:
+          description: List of objects (comment)
+          type: array
+          minItems: 0
+          maxItems: 9999
+          items:
+            type: object
+            properties: 
+                photoOwnerID:
+                  description:  Owner of the photo.
+                  type: string
+                  pattern: '^.*?$'
+                  example: 56A
+                  readOnly: true  
+                  minLength: 3
+                  maxLength: 16
+                photoID:
+                  description: Unique photo identifier.
+                  type: string
+                  pattern: '^.*?$'
+                  example: 472S
+                  readOnly: true
+                  minLength: 3
+                  maxLength: 16
+                commentID:
+                  description: "Comment ID"
+                  type: string
+                  pattern: '^.*?$'
+                  example: JKW
+                  readOnly: true
+                  minLength: 3
+                  maxLength: 16
+                userID:
+                  description: Unique user identifier.
+                  type: string
+                  pattern: '^.*?$'
+                  example: 56A
+                  minLength: 3
+                  maxLength: 16
+                  readOnly: true
+                username:
+                  type: string
+                  description: user
+                  example: Maria
+                  pattern: '^.*?$'
+                  minLength: 3
+                  maxLength: 16
+                content:
+                  description: Content of the comment
+                  type: string
+                  example: "Hi to everyone"
+                  minLength: 3
+                  maxLength: 16        
   parameters:
     username:
       schema:
@@ -487,6 +582,19 @@ components:
       in: path
       required: true
       description: "Username's user."
+    userID:
+      schema:
+        description: "User ID"
+        type: string
+        pattern: '^.*?$'
+        example: 56A
+        readOnly: true
+        minLength: 3
+        maxLength: 16
+      name: userID
+      in: path
+      required: true
+      description: "Unique ID of a user"
     photoIDPathParam:
       schema:
         description: photo schema.
@@ -710,6 +818,27 @@ paths:
           "400": { $ref: "#/components/responses/BadRequest" }
           "401": { $ref: "#/components/responses/UnauthorizedError" }
           "500": { $ref: "#/components/responses/InternalServerError" }  
+   
+  /user/{username}/photos:
+    get:
+        operationId: getFollowerPhotos
+        tags: ["Photo"]
+        security:
+          - bearerAuth : []
+        summary: Return a set of photos uploaded by the followers
+        parameters:
+        - $ref : '#/components/parameters/username'
+        description: |
+          Return the photos founded.
+        responses:
+          "200":
+            description: User's photos founded correctly.
+            content:
+              application/json:
+                schema: { $ref: '#/components/schemas/listPhotos'}
+          "400": { $ref: "#/components/responses/BadRequest" }
+          "401": { $ref: "#/components/responses/UnauthorizedError" }
+          "500": { $ref: "#/components/responses/InternalServerError" }  
   /user/{username}/photo/{photoID}/like/{likeID}:
     parameters:
       - $ref : "#/components/parameters/username"
@@ -766,7 +895,11 @@ paths:
           content:
             application/json:
               schema: { $ref: '#/components/schemas/like'}
-        "400": { $ref: "#/components/responses/BadRequest" }
+        "400":
+          description: Like not found.
+          content:
+            application/json:
+              example: "null"
         "401": { $ref: "#/components/responses/UnauthorizedError" }
         "500": { $ref: "#/components/responses/InternalServerError" }      
   /user/{username}/photo/{photoID}/comment/{commentID}:
@@ -818,19 +951,19 @@ paths:
           
 
     get:
-      operationId: getComment
+      operationId: getComments
       tags: ["Comment"]
       security:
           - bearerAuth : []
-      summary: Return Comment
+      summary: Return Comments
       description: |
-        Return comment of a specific photo.
+        Return comments of a specific photo.
       responses:
         "200":
           description: Comment found correctly.
           content:
             application/json:
-              schema: { $ref: '#/components/schemas/commentResponse'}
+              schema: { $ref: '#/components/schemas/comments'}
         "400": { $ref: "#/components/responses/BadRequest" }
         "401": { $ref: "#/components/responses/UnauthorizedError" }
         "500": { $ref: "#/components/responses/InternalServerError" } 
@@ -890,7 +1023,11 @@ paths:
           content:
             application/json:
               schema: { $ref: '#/components/schemas/follow'}
-        "400": { $ref: "#/components/responses/BadRequest" }
+        "400":
+          description: Follow not found.
+          content:
+            application/json:
+              example: "null"
         "401": { $ref: "#/components/responses/UnauthorizedError" }
         "500": { $ref: "#/components/responses/InternalServerError" }  
   /user/{username}/ban/{banID}:
@@ -946,7 +1083,11 @@ paths:
           content:
             application/json:
               schema: { $ref: '#/components/schemas/ban'}
-        "400": { $ref: "#/components/responses/BadRequest" }
+        "400":
+          description: Ban not found.
+          content:
+            application/json:
+              example: "null"
         "401": { $ref: "#/components/responses/UnauthorizedError" }
         "500": { $ref: "#/components/responses/InternalServerError" }   
   /user/{username}/profile:
@@ -991,6 +1132,28 @@ paths:
                 maxItems: 9999
                 description: images array schema.
                 items: { $ref: "#/components/schemas/stream"}
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/UnauthorizedError" }
+        "500": { $ref: "#/components/responses/InternalServerError" }
+
+  /user/{username}/id/{userID}:
+    parameters: 
+      - $ref: "#/components/parameters/userID"
+      - $ref: "#/components/parameters/username"
+    get:
+      operationId: getUsername
+      tags: ["User"]
+      security:
+          - bearerAuth : []
+      summary: Return user's username
+      description: |
+        Return the user's username.
+      responses:
+        "200":
+          description: Username found correctly.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/user'}
         "400": { $ref: "#/components/responses/BadRequest" }
         "401": { $ref: "#/components/responses/UnauthorizedError" }
         "500": { $ref: "#/components/responses/InternalServerError" }
