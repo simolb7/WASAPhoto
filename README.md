@@ -85,30 +85,7 @@ If you want to launch the WebUI, open a new tab and launch:
 # (here you're inside the NPM container)
 npm run dev
 ```
-
-## Known issues
-
-### Apple M1 / ARM: `failed to load config from`...
-
-If you use Apple M1/M2 hardware, or other ARM CPUs, you may encounter an error message saying that `esbuild` (or some other tool) has been built for another platform.
-
-If so, you can fix issuing these commands **only the first time**:
-
-```shell
-./open-npm.sh
-# (here you're inside the NPM container)
-npm install
-exit
-# Now you can continue as indicated in "How to build/run"
-```
-
-**Use these instructions only if you get an error. Do not use it if your build is OK**.
-
-### My build works when I use `npm run dev`, however there is a Javascript crash in production/grading
-
-Some errors in the code are somehow not shown in `vite` development mode. To preview the code that will be used in production/grading settings, use the following commands:
-
-```shell
+For running the preview, open a new tab and launch:
 ./open-npm.sh
 # (here you're inside the NPM container)
 npm run build-prod
