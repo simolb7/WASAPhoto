@@ -85,7 +85,10 @@ If you want to launch the WebUI, open a new tab and launch:
 # (here you're inside the NPM container)
 npm run dev
 ```
-For running the preview, open a new tab and launch:
+
+## For running the preview, open a new tab and launch:
+
+```shell
 ./open-npm.sh
 # (here you're inside the NPM container)
 npm run build-prod
