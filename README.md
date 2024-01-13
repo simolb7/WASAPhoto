@@ -86,7 +86,7 @@ If you want to launch the WebUI, open a new tab and launch:
 npm run dev
 ```
 
-## For running the preview, open a new tab and launch:
+## For running the preview, open a new tab and launch (after running the backend):
 
 ```shell
 ./open-npm.sh
