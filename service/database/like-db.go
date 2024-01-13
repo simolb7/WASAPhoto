@@ -45,6 +45,11 @@ func (db *appdbimpl) RemoveLikes(user uint64, banned uint64) error {
 	if err != nil {
 		return err
 	}
+	_, err = db.c.Exec("DELETE FROM likes WHERE userId = ? AND photoOwner = ?", user, banned)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 

@@ -45,6 +45,10 @@ func (db *appdbimpl) RemoveComments(user uint64, banned uint64) error {
 	if err != nil {
 		return err
 	}
+	_, err = db.c.Exec("DELETE FROM comments WHERE userId = ? AND photoOwnerID = ?", user, banned)
+	if err != nil {
+		return err
+	}
 	return nil
 }
 
