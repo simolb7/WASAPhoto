@@ -11,13 +11,14 @@ import (
 	"github.com/simolb7/WASAPhoto/service/database"
 )
 
+// Create a like istance, the photOwnerID is taken from the body
 func (rt *_router) likePhoto(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
 	var like Like
-	type LikeRequest struct {
+	type PhotoOwnerStruct struct {
 		UserId int `json:"userId"`
 	}
 
-	var requestBody LikeRequest
+	var requestBody PhotoOwnerStruct
 
 	err := json.NewDecoder(r.Body).Decode(&requestBody)
 	if err != nil {
@@ -47,6 +48,7 @@ func (rt *_router) likePhoto(w http.ResponseWriter, r *http.Request, ps httprout
 	_ = json.NewEncoder(w).Encode(like)
 }
 
+// Delete a like with a specific id from a specific photo, both taken from the path
 func (rt *_router) unlikePhoto(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
 	var user User
 	var like Like
@@ -85,9 +87,9 @@ func (rt *_router) unlikePhoto(w http.ResponseWriter, r *http.Request, ps httpro
 	w.WriteHeader(http.StatusNoContent)
 }
 
+// Returns a like by a specific user, if there isn't a like, return "null"
 func (rt *_router) getLike(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
 
-	// ritorna le informazioni di un like
 	var user User
 	var photo Photo
 	var requestUser User
@@ -132,7 +134,6 @@ func (rt *_router) getLike(w http.ResponseWriter, r *http.Request, ps httprouter
 			return
 		}
 		return
-
 	}
 
 	if err != nil {

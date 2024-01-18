@@ -12,6 +12,7 @@ import (
 	"github.com/simolb7/WASAPhoto/service/database"
 )
 
+// Create a ban, the user banned is taken from the path
 func (rt *_router) banUser(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
 	var ban Ban
 	var user User
@@ -55,6 +56,7 @@ func (rt *_router) banUser(w http.ResponseWriter, r *http.Request, ps httprouter
 	_ = json.NewEncoder(w).Encode(ban)
 }
 
+// Delete a specific ban
 func (rt *_router) unbanUser(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
 	var ban Ban
 	var user User
@@ -91,6 +93,7 @@ func (rt *_router) unbanUser(w http.ResponseWriter, r *http.Request, ps httprout
 	w.WriteHeader(http.StatusNoContent)
 }
 
+// Returns a ban on a specific user by the request user, if there isn't a ban, return "null"
 func (rt *_router) getBans(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
 	var user User
 	var ban Ban

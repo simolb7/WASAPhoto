@@ -12,6 +12,7 @@ import (
 	"github.com/simolb7/WASAPhoto/service/database"
 )
 
+// create a follow, the follower username is taken from the path
 func (rt *_router) followUser(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
 	var follow Follow
 	var user User
@@ -49,6 +50,7 @@ func (rt *_router) followUser(w http.ResponseWriter, r *http.Request, ps httprou
 	_ = json.NewEncoder(w).Encode(follow)
 }
 
+// Delete a follow, the user that we want to unfollow is taken from the path
 func (rt *_router) unfollowUser(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
 	var follow Follow
 	var user User
@@ -88,6 +90,7 @@ func (rt *_router) unfollowUser(w http.ResponseWriter, r *http.Request, ps httpr
 	w.WriteHeader(http.StatusNoContent)
 }
 
+// Returns a follow by a specific user, if there isn't a follow, return "null"
 func (rt *_router) getFollower(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
 	var user User
 	var follow Follow

@@ -14,6 +14,8 @@ import (
 	"github.com/simolb7/WASAPhoto/service/database"
 )
 
+// Upload a photo, takes in input all the information and the populate a photo var.
+// the file is taken from the body and the date is taken from the system
 func (rt *_router) uploadPhoto(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
 	var user User
 	var photo Photo
@@ -62,6 +64,7 @@ func (rt *_router) uploadPhoto(w http.ResponseWriter, r *http.Request, ps httpro
 	_ = json.NewEncoder(w).Encode(photo)
 }
 
+// Delete a photo with a specific id taken from the path
 func (rt *_router) deletePhoto(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
 	var user User
 	token := getToken(r.Header.Get("Authorization"))
@@ -99,6 +102,7 @@ func (rt *_router) deletePhoto(w http.ResponseWriter, r *http.Request, ps httpro
 	w.WriteHeader(http.StatusNoContent)
 }
 
+// return all the photo of an user (not the logged one) with the request user id
 func (rt *_router) getUserPhotos(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
 	var user User
 	var requestUser User
@@ -133,6 +137,7 @@ func (rt *_router) getUserPhotos(w http.ResponseWriter, r *http.Request, ps http
 	_ = json.NewEncoder(w).Encode(photoList)
 }
 
+// returns a stream of photos taken from the followers of the logged user, sorted in descending date order
 func (rt *_router) getUserFollowedPhotos(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
 	var requestUser User
 	var photoList database.Photos

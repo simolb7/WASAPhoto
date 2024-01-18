@@ -56,11 +56,14 @@ type Comment struct {
 
 // Functions for talking from/to the db
 
+// USER
+// convert a user object from databse format to struct format
 func (u *User) FromDatabase(user database.User) {
 	u.Id = user.Id
 	u.Username = user.Username
 }
 
+// convert a user object from struct format to databse format
 func (u *User) ToDatabase() database.User {
 	return database.User{
 		Id:       u.Id,
@@ -68,12 +71,15 @@ func (u *User) ToDatabase() database.User {
 	}
 }
 
+// FOLLOW
+// convert a follow object from databse format to struct format
 func (f *Follow) FollowFromDatabase(follow database.Follow) {
 	f.FollowId = follow.Id
 	f.UserFollowedId = follow.UserFollowedID
 	f.UserId = follow.UserId
 }
 
+// convert a follow object from struct format to databse format
 func (f *Follow) FollowToDatabase() database.Follow {
 	return database.Follow{
 		Id:             f.FollowId,
@@ -82,12 +88,15 @@ func (f *Follow) FollowToDatabase() database.Follow {
 	}
 }
 
+// BAN
+// convert a ban object from databse format to struct format
 func (b *Ban) BanFromDatabase(ban database.Ban) {
 	b.BanId = ban.BanId
 	b.BannedId = ban.UserBannedId
 	b.UserId = ban.UserId
 }
 
+// convert a ban object from struct format to databse format
 func (b *Ban) BanToDatabase() database.Ban {
 	return database.Ban{
 		BanId:        b.BanId,
@@ -96,6 +105,8 @@ func (b *Ban) BanToDatabase() database.Ban {
 	}
 }
 
+// PHOTO
+// convert a Photo object from databse format to struct format
 func (p *Photo) PhotoFromDatabase(photo database.Photo) {
 	p.Id = photo.PhotoId
 	p.UserId = photo.UserId
@@ -105,6 +116,7 @@ func (p *Photo) PhotoFromDatabase(photo database.Photo) {
 	p.CommentNumber = photo.CommentNumber
 }
 
+// convert a Photo object from struct format to databse format
 func (p *Photo) PhotoToDatabase() database.Photo {
 	return database.Photo{
 		PhotoId:       p.Id,
@@ -116,6 +128,8 @@ func (p *Photo) PhotoToDatabase() database.Photo {
 	}
 }
 
+// LIKE
+// convert a Like object from databse format to struct format
 func (l *Like) LikeFromDatabase(like database.Like) {
 	l.LikeId = like.LikeId
 	l.UserId = like.UserId
@@ -124,6 +138,7 @@ func (l *Like) LikeFromDatabase(like database.Like) {
 
 }
 
+// convert a Like object from struct format to databse format
 func (l *Like) LikeToDatabase() database.Like {
 	return database.Like{
 		LikeId:     l.LikeId,
@@ -133,6 +148,8 @@ func (l *Like) LikeToDatabase() database.Like {
 	}
 }
 
+// COMMENT
+// convert a comment object from databse format to struct format
 func (c *Comment) CommentFromDatabase(comment database.Comment) {
 	c.CommentId = comment.CommentId
 	c.UserId = comment.UserId
@@ -140,6 +157,7 @@ func (c *Comment) CommentFromDatabase(comment database.Comment) {
 	c.Content = comment.Content
 }
 
+// convert a comment object from struct format to databse format
 func (c *Comment) CommentToDatabase() database.Comment {
 	return database.Comment{
 		CommentId:    c.CommentId,

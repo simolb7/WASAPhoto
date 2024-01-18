@@ -66,7 +66,7 @@ func (rt *_router) setMyUserName(w http.ResponseWriter, r *http.Request, ps http
 	_ = json.NewEncoder(w).Encode(user)
 }
 
-// This function return user profile
+// This function return user profile, takes in input the username, returns profile entity
 func (rt *_router) getUserProfile(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
 	var user User
 	var requestUser User
@@ -119,6 +119,7 @@ func (rt *_router) getUserProfile(w http.ResponseWriter, r *http.Request, ps htt
 	_ = json.NewEncoder(w).Encode(profile)
 }
 
+// return username by an id
 func (rt *_router) getUsername(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
 	var user User
 	var requestUser User
@@ -153,22 +154,17 @@ func (rt *_router) getUsername(w http.ResponseWriter, r *http.Request, ps httpro
 	_ = json.NewEncoder(w).Encode(user)
 }
 
+// Return the stream of the user logged
 func (rt *_router) getMyStream(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
 
-	// create user struct
 	var user User
-	//	create database stream struct
 	var photoList database.Stream
-	// Ottieni l'ID dell'utente dal token di autorizzazione
 	token := getToken(r.Header.Get("Authorization"))
-	// Ottieni il nome utente dalla URL
 	username := ps.ByName("username")
 
-	// Creare la struttura User con le informazioni ottenute
 	user.Id = token
 	user.Username = username
 
-	// Verifica l'utente
 	dbuser, err := rt.db.CheckUser(user.ToDatabase())
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -176,18 +172,15 @@ func (rt *_router) getMyStream(w http.ResponseWriter, r *http.Request, ps httpro
 	}
 	user.FromDatabase(dbuser)
 
-	// Ottieni lo stream di foto dell'utente dal database
 	stream, err := rt.db.GetStream(user.ToDatabase())
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	// Creare la struttura Stream con le informazioni ottenute
 	photoList.Id = token
 	photoList.Photos = stream
 
-	// Imposta l'intestazione e restituisci lo stream in formato JSON con uno stato HTTP 200 (OK)
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	_ = json.NewEncoder(w).Encode(photoList)
