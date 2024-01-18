@@ -53,22 +53,7 @@ func (db *appdbimpl) RemoveLikes(user uint64, banned uint64) error {
 	return nil
 }
 
-// Database function that returns the count of like on a photo
-func (db *appdbimpl) GetLikeCount(photoid uint64) (int, error) {
-	var count int
-
-	err := db.c.QueryRow("SELECT COUNT(*) FROM likes WHERE photoId = ?", photoid).Scan(&count)
-	if err != nil {
-		if errors.Is(err, sql.ErrNoRows) {
-			return 0, nil
-		}
-		return 0, err
-	}
-	return count, nil
-}
-
-// Function returns a like
-// il token viene usato come id
+// Function returns a like on a photo by a specific user (token)
 func (db *appdbimpl) GetLike(photoid uint64, token uint64) (Like, error) {
 	var like Like
 

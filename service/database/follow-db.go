@@ -38,6 +38,7 @@ func (db *appdbimpl) RemoveFollow(FollowId uint64, UserId uint64, FollowedId uin
 	return nil
 }
 
+// Removes follow in both directions if present, due to ban
 func (db *appdbimpl) RemoveFollows(UserId uint64, FollowedId uint64) error {
 	res, err := db.c.Exec("DELETE FROM followers WHERE userId = ? AND followerId = ?", UserId, FollowedId)
 	res1, err1 := db.c.Exec("DELETE FROM followers WHERE userId = ? AND followerId = ?", FollowedId, UserId)
@@ -55,8 +56,8 @@ func (db *appdbimpl) RemoveFollows(UserId uint64, FollowedId uint64) error {
 		return err1
 	}
 	affected1, err := res1.RowsAffected()
-	if err1 != nil {
-		return err1
+	if err != nil {
+		return err
 	}
 	if affected1 == 0 {
 		return ErrFollowDoesNotExist

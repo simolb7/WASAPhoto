@@ -99,7 +99,6 @@ type AppDatabase interface {
 	InsertLike(l Like) (Like, error)
 	RemoveLike(l Like) error
 	RemoveLikes(user uint64, banned uint64) error
-	GetLikeCount(photoid uint64) (int, error)
 	GetLike(photoid uint64, token uint64) (Like, error)
 
 	InsertFollow(f Follow) (Follow, error)
@@ -118,7 +117,6 @@ type AppDatabase interface {
 	InsertBan(b Ban) (Ban, error)
 	RemoveBan(b Ban) error
 	GetBan(u User, token uint64) (Ban, error)
-	BannedUserCheck(target User, request User) (bool, error)
 
 	Ping() error
 }

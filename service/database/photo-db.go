@@ -78,6 +78,7 @@ func (db *appdbimpl) GetPhotos(u User) ([]Photo, error) {
 	return ret, rows.Err()
 }
 
+// The function returns photos of users that a specific user follows, sorted in a descending order
 func (db *appdbimpl) GetPhotosFollower(token uint64) ([]Photo, error) {
 	var ret []Photo
 	rows, err := db.c.Query("SELECT Id, userId, photo, date FROM photos WHERE userId IN (SELECT followerId FROM followers WHERE userId=?) ORDER BY date DESC LIMIT 10", token)

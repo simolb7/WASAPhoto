@@ -38,7 +38,7 @@ func (db *appdbimpl) SetUsername(u User, newusername string) (User, error) {
 	var conflictingUser User
 	err := db.c.QueryRow("SELECT Id, Username FROM users WHERE Username = ? AND Id <> ?", newusername, u.Id).Scan(&conflictingUser.Id, &conflictingUser.Username)
 	if err == nil {
-		// Il nuovo username è già in uso da un altro utente
+		// new username is already used
 		return u, ErrUsernameAlreadyExists
 	}
 	if !errors.Is(err, sql.ErrNoRows) {
@@ -80,6 +80,7 @@ func (db *appdbimpl) GetUserId(username string) (User, error) {
 	return user, nil
 }
 
+// Check if an user exist by username
 func (db *appdbimpl) CheckUserByUsername(u User) (User, error) {
 	var user User
 	if err := db.c.QueryRow(`SELECT id, username FROM users WHERE username = ?`, u.Username).Scan(&user.Id, &user.Username); err != nil {
@@ -90,6 +91,7 @@ func (db *appdbimpl) CheckUserByUsername(u User) (User, error) {
 	return user, nil
 }
 
+// Return an user form an id
 func (db *appdbimpl) GetUsername(id uint64) (User, error) {
 	var user User
 	if err := db.c.QueryRow(`SELECT id, username FROM users WHERE id = ?`, id).Scan(&user.Id, &user.Username); err != nil {
@@ -100,6 +102,7 @@ func (db *appdbimpl) GetUsername(id uint64) (User, error) {
 	return user, nil
 }
 
+// Check user by id
 func (db *appdbimpl) CheckUserById(u User) (User, error) {
 	var user User
 	err := db.c.QueryRow(`SELECT id, username FROM users WHERE id = ?`, u.Id).Scan(&user.Id, &user.Username)
@@ -111,6 +114,7 @@ func (db *appdbimpl) CheckUserById(u User) (User, error) {
 	return user, nil
 }
 
+// Check user
 func (db *appdbimpl) CheckUser(u User) (User, error) {
 	var user User
 	if err := db.c.QueryRow(`SELECT id, username FROM users WHERE id = ? AND username = ?`, u.Id, u.Username).Scan(&user.Id, &user.Username); err != nil {
@@ -157,30 +161,6 @@ func (db *appdbimpl) GetStream(u User) ([]Photo, error) {
 
 	if rows.Err() != nil {
 		return nil, err
-	}
-	return ret, nil
-}
-
-// Database function that return true, if a user follows another user, false otherwise
-func (db *appdbimpl) GetFollowStatus(user uint64, followed uint64) (bool, error) {
-	var ret bool
-	// query returns 1 if the user follow another user
-	if err := db.c.QueryRow(`SELECT EXISTS(SELECT 1 FROM followers WHERE userId= ? AND  followerId= ?)`, user, followed).Scan(&ret); err != nil {
-		if errors.Is(err, sql.ErrNoRows) {
-			return false, err
-		}
-	}
-	return ret, nil
-}
-
-// Database function that return true, if one user have banned another user, false otherwise
-func (db *appdbimpl) GetBanStatus(user uint64, banned uint64) (bool, error) {
-	var ret bool
-	// query returns 1 if the user have banned another user
-	if err := db.c.QueryRow(`SELECT EXISTS(SELECT 1 FROM bans WHERE userId=? AND bannedId=?)`, user, banned).Scan(&ret); err != nil {
-		if errors.Is(err, sql.ErrNoRows) {
-			return false, err
-		}
 	}
 	return ret, nil
 }

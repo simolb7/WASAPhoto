@@ -21,7 +21,7 @@ func (db *appdbimpl) InsertBan(b Ban) (Ban, error) {
 
 }
 
-// Database fuction that removes a user ban by another one (banner)
+// Database fuction that removes a user ban
 func (db *appdbimpl) RemoveBan(b Ban) error {
 	res, err := db.c.Exec("DELETE FROM bans WHERE banId = ? AND userId = ? AND bannedId = ?", b.BanId, b.UserId, b.UserBannedId)
 	if err != nil {
@@ -46,19 +46,4 @@ func (db *appdbimpl) GetBan(u User, token uint64) (Ban, error) {
 		}
 	}
 	return ban, nil
-}
-
-// Database function that checks if a user is banned by another user
-func (db *appdbimpl) BannedUserCheck(target User, request User) (bool, error) {
-	_, err := db.GetBan(target, request.Id)
-	if errors.Is(err, ErrBanDoesNotExist) {
-		// Se ErrBanDoesNotExist, l'utente non è stato bannato
-		return false, nil
-	} else if err != nil {
-		// Se c'è un altro errore, restituisci l'errore
-		return false, err
-	}
-
-	// Se non ci sono errori, l'utente è stato bannato
-	return true, nil
 }

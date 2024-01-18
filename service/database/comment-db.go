@@ -39,7 +39,7 @@ func (db *appdbimpl) RemoveComment(c Comment) error {
 	return nil
 }
 
-// Database function that removes each comments of a user from
+// Database function that removes each comments of a user due to a ban
 func (db *appdbimpl) RemoveComments(user uint64, banned uint64) error {
 	_, err := db.c.Exec("DELETE FROM comments WHERE userId = ? AND photoOwnerID = ?", banned, user)
 	if err != nil {
@@ -52,7 +52,7 @@ func (db *appdbimpl) RemoveComments(user uint64, banned uint64) error {
 	return nil
 }
 
-// Database function that returns the count of comments on aphoto
+// Database function that returns the count of comments on a photo
 func (db *appdbimpl) GetCommentsCount(photoid uint64) (int, error) {
 	var count int
 
