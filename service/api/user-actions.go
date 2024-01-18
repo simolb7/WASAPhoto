@@ -134,7 +134,7 @@ func (rt *_router) getUsername(w http.ResponseWriter, r *http.Request, ps httpro
 	}
 	requestUser.FromDatabase(dbrequestuser)
 
-	idstr := ps.ByName("id")
+	idstr := ps.ByName("userid")
 	id, err = strconv.ParseUint(idstr, 10, 64)
 	if err != nil {
 		// Gestisci l'errore, ad esempio restituisci un errore HTTP o fai altro
