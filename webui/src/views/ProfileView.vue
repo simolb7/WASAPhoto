@@ -192,9 +192,11 @@ export default {
             return formattedDateTime;
         },
         async sendComment(username, photoid, comment, ownerid) {
-            if (comment === "") {
+            if (comment === null || comment === undefined) {
                 this.errormsg = "Emtpy comment field."
-            } else {
+            } else if(comment.length > 200) {
+                this.errormsg = "Comment is too long."
+            }else {
                 try {
                     let response = await this.$axios.post("/user/" + username + "/photo/" + photoid + "/comment", { content: comment, photoOwnerID: ownerid }, {
                         headers: {

@@ -17,6 +17,8 @@ export default {
         async doLogin() {
             if (this.username == "") {
                 this.errormsg = "Username cannot be empty.";
+            } else if (this.username.length > 20) {
+              this.errormsg = "Username must be no more than 20 characters.";
             } else {
                 try {
                     let response = await this.$axios.post("/session", { username: this.username })
