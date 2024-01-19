@@ -426,6 +426,7 @@ export default {
                 this.clear = response.data
                 this.ban.banId = 0
                 this.refresh()
+                location.reload();
             } catch (e) {
                 if (e.response && e.response.status === 400) {
                     this.errormsg = "Form error, please check all fields and try again. If you think that this is an error, write an e-mail to us.";
