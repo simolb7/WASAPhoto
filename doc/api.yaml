@@ -902,6 +902,7 @@ paths:
               schema:
                 type: string
                 example: "Null"
+                description: Null is returned when the like is not found
         "401": { $ref: "#/components/responses/UnauthorizedError" }
         "500": { $ref: "#/components/responses/InternalServerError" }      
   /user/{username}/photo/{photoID}/comment/{commentID}:
@@ -1032,6 +1033,7 @@ paths:
               schema:
                 type: string
                 example: "Null"
+                description: Null is returned when the follow is not found
         "401": { $ref: "#/components/responses/UnauthorizedError" }
         "500": { $ref: "#/components/responses/InternalServerError" }  
   /user/{username}/ban/{banID}:
@@ -1094,6 +1096,7 @@ paths:
               schema:
                 type: string
                 example: "Null"
+                description: Null is returned when the ban is not found
         "401": { $ref: "#/components/responses/UnauthorizedError" }
         "500": { $ref: "#/components/responses/InternalServerError" }   
   /user/{username}/profile:
