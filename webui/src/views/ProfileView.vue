@@ -1,8 +1,6 @@
 <script>
-//import LogModal from "../components/Logmodal.vue";
 
 export default {
-    //components: { LogModal },
     data: function () {
         return {
             errormsg: null,
@@ -59,8 +57,6 @@ export default {
     methods: {
 
         async refresh() {
-            
-			this.loading = true;
 			this.errormsg = null;
 			try {
 				let response = this.$router.go({ path: '/user/' + this.username + '/profile' })
@@ -68,7 +64,6 @@ export default {
 			} catch (e) {
 				this.errormsg = e.toString();
 			}
-			this.loading = false;
             await this.userProfile();
         },
         async userProfile() {

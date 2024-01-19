@@ -3,8 +3,6 @@ export default {
 	data: function() {
 		return {
 			errormsg: null,
-			loading: false,
-			some_data: null,
 			username: localStorage.getItem('username'),
 			token: localStorage.getItem('token'),
 			images: null,
@@ -81,7 +79,6 @@ export default {
 					})
 					this.profile = response.data
 					this.images = null
-					this.successmsg = "Photo uploaded successfully."
 					this.$router.replace({ path: '/user/' + this.username + '/profile' });
 				} catch (e) {
 					if (e.response && e.response.status === 400) {
@@ -166,7 +163,6 @@ export default {
             console.error("Errore durante il recupero dello stato del like:", error);
         },
 		formatDateTime(dateTime) {
-            //timeZoneName: 'short' 
             const options = { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit'};
             const formattedDateTime = new Date(dateTime).toLocaleString('en-US', options);
             return formattedDateTime;

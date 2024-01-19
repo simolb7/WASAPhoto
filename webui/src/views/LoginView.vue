@@ -1,6 +1,5 @@
 <script>
 
-//import axios from './serviced/axios.js' //rivedere
 export default {
     components: {},
     data: function () {
