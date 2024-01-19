@@ -568,7 +568,7 @@ components:
                   type: string
                   example: "Hi to everyone"
                   minLength: 3
-                  maxLength: 16        
+                  maxLength: 16      
   parameters:
     username:
       schema:
@@ -896,10 +896,12 @@ paths:
             application/json:
               schema: { $ref: '#/components/schemas/like'}
         "400":
-          description: Like not found.
+          description: Like not found. 
           content:
             application/json:
-              example: "null"
+              schema:
+                type: string
+                example: "Null"
         "401": { $ref: "#/components/responses/UnauthorizedError" }
         "500": { $ref: "#/components/responses/InternalServerError" }      
   /user/{username}/photo/{photoID}/comment/{commentID}:
@@ -1024,10 +1026,12 @@ paths:
             application/json:
               schema: { $ref: '#/components/schemas/follow'}
         "400":
-          description: Follow not found.
+          description: Follow not found. 
           content:
             application/json:
-              example: "null"
+              schema:
+                type: string
+                example: "Null"
         "401": { $ref: "#/components/responses/UnauthorizedError" }
         "500": { $ref: "#/components/responses/InternalServerError" }  
   /user/{username}/ban/{banID}:
@@ -1084,10 +1088,12 @@ paths:
             application/json:
               schema: { $ref: '#/components/schemas/ban'}
         "400":
-          description: Ban not found.
+          description: Ban not found. 
           content:
             application/json:
-              example: "null"
+              schema:
+                type: string
+                example: "Null"
         "401": { $ref: "#/components/responses/UnauthorizedError" }
         "500": { $ref: "#/components/responses/InternalServerError" }   
   /user/{username}/profile:
