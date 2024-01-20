@@ -227,16 +227,10 @@ export default {
 			}
 		},
         canDeleteComment(comment) {
-        // Supponiamo che tu abbia informazioni sull'utente autenticato e sulla proprietà della foto
-            //console.log('comment:', comment);
             const isAuthenticatedUser = localStorage.getItem("username") === comment.ownerUsername;
             const isPhotoOwner = comment.photoOwnerID === parseInt(localStorage.getItem("token"));
-            /*console.log('comment ID:', comment.id);
-            console.log('id user auth:', localStorage.getItem("token"));
-            console.log('id owner:', comment.photoOwnerID);
-            console.log('isAuthenticatedUser:', isAuthenticatedUser);
-            console.log('isPhotoOwner:', isPhotoOwner);
-            */// Ritorna true solo se l'utente è autenticato e ha il permesso di eliminare il commento
+          
+            // Ritorna true solo se l'utente è autenticato e ha il permesso di eliminare il commento (è il proprietario della foto o del commento)
             return isAuthenticatedUser || isPhotoOwner;
         },
         async getusername(userid) {
@@ -442,9 +436,9 @@ export default {
         },
         async getBan() {
             try {
-                let response = await this.$axios.get("/user/" + this.$route.params.username + "/ban", { //simone
+                let response = await this.$axios.get("/user/" + this.$route.params.username + "/ban", { 
                 headers: {
-                    Authorization: `Bearer ${localStorage.getItem("token")}` //Marta
+                    Authorization: `Bearer ${localStorage.getItem("token")}`
                 }
                 });
                 if (response.data !== null) {
