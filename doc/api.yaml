@@ -368,66 +368,6 @@ components:
           type: integer
           minimum: 0
           example: 1
-    
-    stream:
-      title: stream
-      description: "Stream schema"
-      type: object
-      properties: 
-        userID:
-          description: Unique user identifier.
-          type: string
-          pattern: '^.*?$'
-          example: 56A
-          minLength: 3
-          maxLength: 16
-          readOnly: true
-        photos:
-          description: List of objects (photo)
-          type: array
-          minItems: 0
-          maxItems: 9999
-          items:
-            type: object
-            properties: 
-              photoID: 
-                description: Unique photo identifier.
-                type: string
-                pattern: '^.*?$'
-                example: 472S
-                readOnly: true
-                minLength: 3
-                maxLength: 16
-              userID:
-                description: Unique photo identifier.
-                type: string
-                pattern: '^.*?$'
-                example: 56A
-                readOnly: true  
-                minLength: 3
-                maxLength: 16
-              file:
-                description: file path
-                type: string
-                pattern: '^.*?$'
-                format: binary
-                minLength: 1
-                maxLength: 999
-              dateTime:
-                description: Date and time when photo was uploaded
-                type: string
-                format: date-time
-                example: "2023-11-01T17:32:28Z"
-              likeNumber:
-                description: Number of likes on the photo
-                type: integer
-                example: 0
-                minimum: 0
-              commentNumber:
-                description: Number of comment on the photo
-                type: integer
-                example: 0
-                minimum: 0
     listPhotos:
       title: listPhotos
       description: "listPhotos schema"
@@ -820,14 +760,14 @@ paths:
           "500": { $ref: "#/components/responses/InternalServerError" }  
    
   /user/{username}/photos:
+    parameters:
+      - $ref : "#/components/parameters/username"
     get:
         operationId: getFollowerPhotos
         tags: ["Photo"]
         security:
           - bearerAuth : []
         summary: Return a set of photos uploaded by the followers
-        parameters:
-        - $ref : '#/components/parameters/username'
         description: |
           Return the photos founded.
         responses:
@@ -1119,32 +1059,6 @@ paths:
         "400": { $ref: "#/components/responses/BadRequest" }
         "401": { $ref: "#/components/responses/UnauthorizedError" }
         "500": { $ref: "#/components/responses/InternalServerError" }
-  /user/{username}/stream:
-    parameters: 
-      - $ref: "#/components/parameters/username"
-    get:
-      operationId: getMyStream
-      tags: ["User"]
-      security:
-          - bearerAuth : []
-      summary: Return the user's stream
-      description: |
-        Return the user's stream.
-      responses:
-        "200":
-          description: Stream found correctly.
-          content:
-            application/json:
-              schema: 
-                type: array
-                minItems: 0
-                maxItems: 9999
-                description: images array schema.
-                items: { $ref: "#/components/schemas/stream"}
-        "400": { $ref: "#/components/responses/BadRequest" }
-        "401": { $ref: "#/components/responses/UnauthorizedError" }
-        "500": { $ref: "#/components/responses/InternalServerError" }
-
   /user/{username}/id/{userID}:
     parameters: 
       - $ref: "#/components/parameters/userID"
