@@ -758,27 +758,7 @@ paths:
           "400": { $ref: "#/components/responses/BadRequest" }
           "401": { $ref: "#/components/responses/UnauthorizedError" }
           "500": { $ref: "#/components/responses/InternalServerError" }  
-   
-  /user/{username}/photos:
-    parameters:
-      - $ref : "#/components/parameters/username"
-    get:
-        operationId: getFollowerPhotos
-        tags: ["Photo"]
-        security:
-          - bearerAuth : []
-        summary: Return a set of photos uploaded by the followers
-        description: |
-          Return the photos founded.
-        responses:
-          "200":
-            description: User's photos founded correctly.
-            content:
-              application/json:
-                schema: { $ref: '#/components/schemas/listPhotos'}
-          "400": { $ref: "#/components/responses/BadRequest" }
-          "401": { $ref: "#/components/responses/UnauthorizedError" }
-          "500": { $ref: "#/components/responses/InternalServerError" }  
+    
   /user/{username}/photo/{photoID}/like/{likeID}:
     parameters:
       - $ref : "#/components/parameters/username"
@@ -1080,3 +1060,23 @@ paths:
         "400": { $ref: "#/components/responses/BadRequest" }
         "401": { $ref: "#/components/responses/UnauthorizedError" }
         "500": { $ref: "#/components/responses/InternalServerError" }
+  /user/{username}/stream:
+    parameters:
+      - $ref : "#/components/parameters/username"
+    get:
+        operationId: getMyStream
+        tags: ["User"]
+        security:
+          - bearerAuth : []
+        summary: Return a set of photos uploaded by the followers of the logged user
+        description: |
+          Return the photos founded.
+        responses:
+          "200":
+            description: Set of photo founded correctly.
+            content:
+              application/json:
+                schema: { $ref: '#/components/schemas/listPhotos'}
+          "400": { $ref: "#/components/responses/BadRequest" }
+          "401": { $ref: "#/components/responses/UnauthorizedError" }
+          "500": { $ref: "#/components/responses/InternalServerError" } 

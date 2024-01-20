@@ -96,7 +96,7 @@ export default {
 		},
 		async streamFollowers() {
             try {
-                let response = await this.$axios.get("/user/" + this.username + "/photos", {
+                let response = await this.$axios.get("/user/" + this.username + "/stream", {
                     headers: {
                         Authorization: "Bearer " + localStorage.getItem("token")
                     }
