@@ -152,35 +152,3 @@ func (rt *_router) getUsername(w http.ResponseWriter, r *http.Request, ps httpro
 	w.WriteHeader(http.StatusOK)
 	_ = json.NewEncoder(w).Encode(user)
 }
-
-// Return the stream of the user logged
-func (rt *_router) getMyStream(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
-
-	var user User
-	var photoList database.Stream
-	token := getToken(r.Header.Get("Authorization"))
-	username := ps.ByName("username")
-
-	user.Id = token
-	user.Username = username
-
-	dbuser, err := rt.db.CheckUser(user.ToDatabase())
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-	user.FromDatabase(dbuser)
-
-	stream, err := rt.db.GetStream(user.ToDatabase())
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	photoList.Id = token
-	photoList.Photos = stream
-
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	_ = json.NewEncoder(w).Encode(photoList)
-}

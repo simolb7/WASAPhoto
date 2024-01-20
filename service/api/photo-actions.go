@@ -102,7 +102,7 @@ func (rt *_router) deletePhoto(w http.ResponseWriter, r *http.Request, ps httpro
 	w.WriteHeader(http.StatusNoContent)
 }
 
-// return all the photo of an user (not the logged one) with the request user id
+// return all the photo of an user (not the logged one) with the request user id and the id of the user searched
 func (rt *_router) getUserPhotos(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
 	var user User
 	var requestUser User

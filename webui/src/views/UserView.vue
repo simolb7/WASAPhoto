@@ -277,7 +277,6 @@ export default {
         },
         async likePhoto(ownerid,photoid) {
             try {
-                console.log(ownerid, photoid)
                 let response = await this.$axios.post("/user/" + localStorage.getItem('username') + "/photo/" + photoid + "/like", {userId: ownerid}, {
                     headers: {
                         Authorization: "Bearer " + localStorage.getItem("token")
@@ -420,7 +419,7 @@ export default {
                 this.clear = response.data
                 this.ban.banId = 0
                 this.refresh()
-                location.reload();
+                //location.reload();
             } catch (e) {
                 if (e.response && e.response.status === 400) {
                     this.errormsg = "Form error, please check all fields and try again. If you think that this is an error, write an e-mail to us.";
