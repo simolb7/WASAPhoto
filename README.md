@@ -100,7 +100,6 @@ $ docker run -it --rm -p 3000:3000 wasa-photos-backend:latest
 Frontend
 ```
 $ docker run -it --rm -p 8080:80 wasa-photos-frontend:latest
-
 ```
 ### License
 
