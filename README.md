@@ -1,3 +1,26 @@
+## Presentation
+### Home view
+[![homepage2.png](https://i.postimg.cc/KzSHS5NB/homepage2.png)](https://postimg.cc/sBmc57bg)
+
+Presented with a stream of photos, uploaded by the own users followed. On each photo, the user logged can put a like, leave a comment (and later delete), or view all comments. At the top of the page, the user can:
+* Search other users with the searchBar
+* Upload a photo
+* Visit own profile
+
+### User view
+![alt text](https://i.postimg.cc/fLjrf9Ns/Profilo-marta.png)
+
+Presented with a stream of photos, uploaded by the user visited. On each photo, the user logged can do the default operations. At the top of the page, the user can:
+* Follow the user
+* Ban the user
+
+### Profile view
+[![profilepage.png](https://i.postimg.cc/vHf7CdKq/profilepage.png)](https://postimg.cc/cr188P0w)
+
+Presented with a stream of photos, uploaded by the user logged. On each photo, the user logged can do the default operations and also remove each comment or remove the photo. At the top of the page, the user can:
+* Perform logout
+* Change username
+
 ## Project structure
 
 * `cmd/` contains all executables; Go programs here should only do "executable-stuff", like reading options from the CLI/env, etc.
